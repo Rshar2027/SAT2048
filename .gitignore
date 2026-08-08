@@ -1,0 +1,10 @@
+# Local Claude Code config (absolute paths, machine-specific)
+.claude/
+
+# Local snapshot kept outside version control — git history is the real backup
+sat-2048.pre-redesign-backup.html
+
+# Progress backups downloaded from the app's "Save backup file" button
+sat-2048-backup-*.json
+
+.DS_Store
