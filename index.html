@@ -466,47 +466,69 @@
      line — as an inline-block the rationale prose wrapped around it */
   .qz-rationale h4 { margin: 0 0 8px; font-size: 0.72rem; letter-spacing: 0.1em; color: #fff; background: var(--accent); display: block; width: max-content; max-width: 100%; padding: 3px 10px; text-transform: uppercase; }
 
-  /* Mistake log — matches the boxy question UI */
+  /* ---- Mistake log ----
+     The in-quiz log (.mistake) wears the same Bluebook chrome as the question next
+     to it: Roboto, hairline ink borders with 8px radii, indigo for "chosen", the
+     circled letter/number badges, and the perforated rule under the header bar.
+     The unscoped .mk-* rules below stay boxy — the external log lives in a .sheet,
+     which is Wrapped-themed — so every Bluebook rule here is scoped to .mistake. */
   .mistake {
-    background: #fff; border: 2px solid #000;
-    margin: 8px 0 16px; font-family: var(--sans);
+    background: #fff; border: 1px solid var(--bb-ink); border-radius: 10px; overflow: hidden;
+    margin: 8px 0 16px; font-family: var(--bb-sans); color: var(--bb-ink);
   }
+  /* header echoes .qz-qbar — grey strip, flush solid badge, perforated rule beneath */
   .mk-head {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--red); color: #fff; padding: 10px 16px;
+    position: relative; display: flex; align-items: center; gap: 14px;
+    background: #f0f0f0; color: var(--bb-ink); padding: 0 16px 0 0; min-height: 42px; margin-bottom: 4px;
+  }
+  .mk-head::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 3px;
+    background: repeating-linear-gradient(90deg, var(--bb-ink) 0 10px, transparent 10px 16px);
   }
   .mk-badge {
-    flex: 0 0 30px; width: 30px; height: 30px; font-size: 0.9rem; font-weight: 800;
-    background: #fff; color: var(--red); display: flex; align-items: center; justify-content: center;
+    flex: 0 0 42px; width: 42px; height: 42px; font-size: 1.1rem; font-weight: 700;
+    background: var(--bb-red); color: #fff; display: flex; align-items: center; justify-content: center;
   }
-  .mistake h3 { margin: 0; font-size: 1rem; letter-spacing: 0.06em; text-transform: uppercase; }
-  .mistake .mk-sub { color: #000; font-size: 0.82rem; margin: 0; line-height: 1.5; padding: 12px 16px 0; }
-  .mk-body { padding: 4px 16px 18px; }
+  .mistake h3 { margin: 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0; text-transform: none; }
+  .mistake .mk-sub { color: var(--bb-ink); font-size: 0.9rem; margin: 0; line-height: 1.6; padding: 16px 22px 0; }
+  .mk-body { padding: 4px 22px 22px; }
   .mk-timer {
-    display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid #000;
-    padding: 12px 16px; margin: 14px 0 18px; position: sticky; top: 8px; z-index: 2;
+    display: flex; align-items: center; gap: 14px; background: #fff;
+    border: 1px solid var(--bb-ink); border-radius: 8px;
+    padding: 13px 16px; margin: 18px 0 20px; position: sticky; top: 8px; z-index: 2;
   }
-  .mk-timer .mk-clock { font-size: 1.5rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--red); min-width: 66px; }
-  .mk-timer.done { background: var(--green); border-color: var(--green); }
-  .mk-timer.done .mk-clock, .mk-timer.done .mk-note { color: #fff; }
-  .mk-timer .mk-note { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+  .mk-timer .mk-clock { font-size: 1.55rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--bb-red); min-width: 70px; }
+  /* done state mirrors .qz-banner.ok — green tint + 2px green rule, not a fill */
+  .mk-timer.done { background: var(--green-bg); border: 2px solid var(--green); padding: 12px 15px; }
+  .mk-timer.done .mk-clock, .mk-timer.done .mk-note { color: var(--green); }
+  .mk-timer .mk-note { font-size: 0.82rem; color: var(--bb-gray); line-height: 1.45; }
 
   .mk-field { margin-bottom: 18px; }
+  .mistake .mk-field { margin-bottom: 22px; }
   .mistake label {
-    display: flex; align-items: center; gap: 9px; font-size: 0.82rem; font-weight: 800;
-    margin: 0 0 9px; color: #000; text-transform: uppercase; letter-spacing: 0.03em;
+    display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 700;
+    margin: 0 0 10px; color: var(--bb-ink); text-transform: none; letter-spacing: 0;
   }
   .mk-n {
     flex: 0 0 22px; width: 22px; height: 22px; background: #000; color: #fff;
     font-size: 0.78rem; display: flex; align-items: center; justify-content: center; font-weight: 800;
   }
+  /* circled number — the same badge the answer choices use for A/B/C/D */
+  .mistake .mk-n {
+    flex: 0 0 27px; width: 27px; height: 27px; border-radius: 50%;
+    background: #fff; border: 2px solid var(--bb-ink); color: var(--bb-ink);
+    font-size: 0.85rem; font-weight: 700;
+  }
+  .mistake .ext-opt { font-weight: 400; color: var(--bb-gray); text-transform: none; letter-spacing: 0; }
   .mistake textarea {
-    width: 100%; border: 1.5px solid #000; padding: 12px 14px;
-    font-family: var(--sans); font-size: 0.92rem; background: #fff; color: #000;
-    min-height: 84px; resize: vertical; line-height: 1.6;
+    width: 100%; border: 1px solid var(--bb-ink); border-radius: 8px; padding: 13px 16px;
+    font-family: var(--bb-sans); font-size: 0.95rem; background: #fff; color: var(--bb-ink);
+    min-height: 88px; resize: vertical; line-height: 1.6;
   }
   #mkText, #mkApproach { min-height: 96px; }
-  .mistake textarea:focus { outline: none; border-width: 2px; }
+  .mistake textarea::placeholder { color: #9a9a9a; }
+  /* focus borrows .choice.selected — 2px indigo, padding trimmed so nothing shifts */
+  .mistake textarea:focus { outline: none; border: 2px solid var(--bb-blue); padding: 12px 15px; }
 
   .mk-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
   .mk-chip {
@@ -515,12 +537,24 @@
   }
   .mk-chip:hover { background: #f2f2f2; }
   .mk-chip.on { background: #000; color: #fff; }
+  /* trap chips read as small Bluebook pills; "on" uses the choice-selected indigo */
+  .mistake .mk-chips { gap: 8px; margin-bottom: 12px; }
+  .mistake .mk-chip {
+    border: 1px solid var(--bb-ink); border-radius: 999px; background: #fff; color: var(--bb-ink);
+    font-family: var(--bb-sans); padding: 7px 15px; font-size: 0.85rem; font-weight: 500;
+    text-transform: none; letter-spacing: 0;
+  }
+  .mistake .mk-chip:hover { background: #f6f8fb; }
+  .mistake .mk-chip.on { background: var(--bb-blue); border-color: var(--bb-blue); color: #fff; font-weight: 700; }
 
   .mk-underlined {
     background: #fff; border: 1.5px solid #000; padding: 10px 12px; margin-bottom: 10px;
   }
   .mk-underlined .mku-lbl { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em; color: #000; text-transform: uppercase; margin-bottom: 6px; }
   .mk-underlined .mku-q { font-family: var(--serif); font-size: 0.9rem; line-height: 1.5; color: #000; border-left: 3px solid #000; padding-left: 10px; margin: 4px 0; }
+  .mistake .mk-underlined { border: 1px solid var(--bb-ink); border-radius: 8px; padding: 12px 15px; margin-bottom: 12px; }
+  .mistake .mk-underlined .mku-lbl { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; color: var(--bb-gray); }
+  .mistake .mk-underlined .mku-q { font-size: 0.98rem; line-height: 1.65; color: var(--bb-ink); border-left: 3px solid var(--bb-blue); }
 
   .mk-conf { display: flex; gap: 10px; flex-wrap: wrap; }
   .mk-conf-opt {
@@ -541,10 +575,53 @@
     content: "✓"; position: absolute; inset: 0; color: #000; font-size: 0.72rem; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
   }
+  /* confidence buttons are answer choices: hairline card, circled marker, and the
+     same tint-plus-2px-rule the revealed correct/wrong choices use when picked */
+  .mistake .mk-conf { gap: 12px; }
+  .mistake .mk-conf-opt {
+    border: 1px solid var(--bb-ink); border-radius: 8px; background: #fff; color: var(--bb-ink);
+    font-family: var(--bb-sans); gap: 13px; padding: 13px 16px; font-size: 0.95rem; font-weight: 400;
+    text-transform: none; letter-spacing: 0;
+  }
+  .mistake .mk-conf-opt .box {
+    flex: 0 0 24px; width: 24px; height: 24px; border: 2px solid var(--bb-ink); border-radius: 50%; background: #fff;
+  }
+  .mistake .mk-conf-opt:hover { background: #f6f8fb; }
+  .mistake .mk-conf-opt.on { border-width: 2px; padding: 12px 15px; font-weight: 700; background: #fff; }
+  .mistake .mk-conf-opt[data-conf="Got it"].on { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+  .mistake .mk-conf-opt[data-conf="Still shaky"].on { border-color: var(--amber); background: var(--amber-bg); color: var(--amber); }
+  .mistake .mk-conf-opt[data-conf="Need more practice"].on { border-color: var(--red); background: var(--red-bg); color: var(--red); }
+  .mistake .mk-conf-opt.on .box { background: currentColor; border-color: currentColor; }
+  .mistake .mk-conf-opt.on .box::after { color: #fff; font-size: 0.82rem; font-weight: 700; }
 
-  .mistake .mk-count { font-size: 0.74rem; color: var(--muted); margin: 4px 0 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
-  .mistake .mk-count.ok { color: #000; }
-  .mk-submit { margin-top: 14px; width: 100%; padding: 13px; font-size: 0.85rem; }
+  .mistake .mk-count { font-size: 0.88rem; color: var(--bb-gray); margin: 6px 0 0; font-weight: 400; letter-spacing: 0; }
+  .mistake .mk-count.ok { color: var(--green); font-weight: 700; }
+  .mk-submit { margin-top: 16px; width: 100%; padding: 14px; font-size: 0.95rem; }
+
+  /* vocab rows inside the quiz log — same hairline/radius language as the choices */
+  .mistake .vocab-add { gap: 10px; }
+  .mistake .vocab-add input {
+    border: 1px solid var(--bb-ink); border-radius: 8px; padding: 11px 14px;
+    font-family: var(--bb-sans); font-size: 0.92rem; color: var(--bb-ink);
+  }
+  .mistake .vocab-add input::placeholder { color: #9a9a9a; }
+  .mistake .vocab-add input:focus { outline: none; border: 2px solid var(--bb-blue); padding: 10px 13px; }
+  .mistake .btn {
+    border: 1px solid var(--bb-ink); border-radius: 999px; background: #fff; color: var(--bb-ink);
+    font-family: var(--bb-sans); font-size: 0.88rem; font-weight: 700;
+    text-transform: none; letter-spacing: 0; padding: 10px 20px;
+  }
+  .mistake .btn:hover { background: #f6f8fb; color: var(--bb-ink); }
+  .mistake .vocab-list { margin-top: 12px; border: 1px solid var(--bb-ink); border-radius: 8px; overflow: hidden; }
+  .mistake .vocab-item {
+    border: none; border-bottom: 1px solid #dcdcdc; padding: 11px 15px;
+    font-family: var(--bb-sans); font-size: 0.92rem;
+  }
+  .mistake .vocab-item:last-child { border-bottom: none; }
+  .mistake .vocab-item .vw { font-weight: 700; }
+  .mistake .vocab-item .vd { color: var(--bb-gray); }
+  .mistake .vocab-note { font-size: 0.8rem; color: var(--bb-gray); line-height: 1.55; margin-top: 10px; }
+  .mistake .vocab-flag { border-radius: 999px; border: 1px solid var(--amber); padding: 3px 11px; font-size: 0.66rem; font-weight: 700; }
 
   .qz-bottom {
     position: relative;
@@ -837,6 +914,10 @@
     .qz-directions { top: 76px; left: 8px; width: calc(100vw - 16px); padding: 20px 18px 16px; }
     .qz-menu { top: 74px; right: 8px; }
     .qz-qbar { margin: 20px 0 20px; }
+    .mistake .mk-sub { padding: 14px 15px 0; font-size: 0.86rem; }
+    .mk-body { padding: 4px 15px 18px; }
+    .mistake .mk-conf-opt { padding: 12px 13px; font-size: 0.9rem; }
+    .mistake .mk-conf-opt.on { padding: 11px 12px; }
     .choice { padding: 12px 13px; gap: 11px; font-size: 0.98rem; }
     .elim-ctrl { flex: 0 0 40px; }
     .qz-bottom { padding: 10px 12px; min-height: 62px; gap: 8px; }
@@ -1228,7 +1309,7 @@
             </div>
 
             <div class="mk-count" id="mkCount">0 / 250 characters</div>
-            <button class="btn blue mk-submit" id="mkSubmit" disabled>Save mistake log &amp; continue</button>
+            <button class="pillbtn blue mk-submit" id="mkSubmit" disabled>Save mistake log &amp; continue</button>
           </div>
         </div>
       </div>
@@ -1746,6 +1827,9 @@ function defaultState() {
     highlights: {},     // id -> {passage: html, stem: html}
     marked: {},
     lastServedId: null, // where the in-order walk through the pool left off
+    // Unfinished work that a reload must not erase — see resumeUnfinished().
+    pendingQuestion: null, // {id, at, mode, wrongTries, timeSec} once a wrong pick lands
+    pendingMistake: null,  // {attempt, remainingSec, spentSec, draft} once the log opens
     rush: { runs: [], setup: null }, // Question Rush history + last-used setup
 
     best: 0,
@@ -2063,8 +2147,9 @@ let activeQ = null;
 let selected = null;
 let checked = false;
 let wrongTries = [];
-let qTimerInt = null, qStartMs = 0, qElapsedSec = 0;
+let qTimerInt = null, qStartMs = 0, qElapsedSec = 0, qStartAt = "";
 let mkInt = null, mkRemaining = MIN_REFLECT_SEC, mkStartMs = 0, mkDone = false;
+let mkOwedSec = MIN_REFLECT_SEC, mkPriorSec = 0; // owed = time still required this sitting
 let pendingAttempt = null;
 
 // Wrap the source's given-underline span (e.g. "the underlined sentence" the stem
@@ -2099,11 +2184,15 @@ function formatPassage(p, q) {
 
 function openQuiz(forceId) {
   if (quizOpen) return;
+  // Unfinished business comes first: an abandoned question or an open mistake log
+  // is re-served instead of a new question, no matter how the quiz was reached.
+  if (!forceId && (state.pendingMistake || state.pendingQuestion)) { resumeUnfinished(); return; }
   activeQ = forceId ? qById.get(forceId) : chooseQuestion();
   if (forceId) activeIsReview = false;
   if (!activeQ) { toast("No questions available — check Practice Settings."); return; }
   quizOpen = true;
   selected = null; checked = false; pendingAttempt = null; wrongTries = [];
+  state.pendingQuestion = null; // resume paths below re-establish it
   state.seen[activeQ.id] = true;
   state.lastServedId = activeQ.id;   // so the in-order walk resumes from here
 
@@ -2174,7 +2263,7 @@ function openQuiz(forceId) {
   chk.disabled = true;
 
   // timer
-  qElapsedSec = 0; qStartMs = Date.now();
+  qElapsedSec = 0; qStartMs = Date.now(); qStartAt = new Date().toISOString();
   clearInterval(qTimerInt);
   $("qzTimer").textContent = "0:00";
   $("qzTimer").classList.remove("warn");
@@ -2182,6 +2271,8 @@ function openQuiz(forceId) {
     qElapsedSec = Math.floor((Date.now() - qStartMs) / 1000);
     $("qzTimer").textContent = fmtClock(qElapsedSec);
     if (qElapsedSec >= 71) $("qzTimer").classList.add("warn");
+    // keep the resumable record's clock current (written out on the next save)
+    if (state.pendingQuestion && state.pendingQuestion.id === activeQ.id) state.pendingQuestion.timeSec = qElapsedSec;
   }, 250);
 
   $("quiz").classList.remove("hidden");
@@ -2251,11 +2342,22 @@ function markWrongTry() {
   banner.textContent = "✗ Incorrect — try again.";
 
   $("qzCheck").disabled = true;
+  // Persist the wrong picks so reloading before the mistake log opens doesn't
+  // wipe them — the question comes back with the same choices already burned.
+  state.pendingQuestion = {
+    id: activeQ.id,
+    at: qStartAt,
+    mode: activeIsReview ? "review" : "new",
+    wrongTries: wrongTries.slice(),
+    timeSec: qElapsedSec
+  };
+  save();
 }
 
 function finalizeAnswer() {
   checked = true;
   clearInterval(qTimerInt);
+  state.pendingQuestion = null; // the attempt (or the mistake log) takes over from here
   const hadMistakes = wrongTries.length > 0;
   document.querySelectorAll(".choice").forEach(c => { c.disabled = true; });
   document.querySelectorAll(".elim-btn, .elim-undo").forEach(b => b.disabled = true);
@@ -2307,6 +2409,7 @@ function finalizeAnswer() {
     $("qzCheck").disabled = true;
     $("qzCheck").textContent = "Complete mistake log to continue";
     openMistakeLog();
+    savePendingMistake(true);
   }
   save();
 }
@@ -2326,18 +2429,22 @@ function underlinedFromPassage() {
   return out;
 }
 
-function openMistakeLog() {
+// `resume` is a saved state.pendingMistake record — restores the half-written log
+// (and whatever reflection time is still owed) after a reload.
+function openMistakeLog(resume) {
+  const draft = (resume && resume.draft) || null;
   const box = $("mistakeBox");
   box.classList.remove("hidden");
-  MK_FIELDS.forEach(id => { $(id).value = ""; });
-  $("mkApproach").value = "1. \n2. ";
-  mkTraps = new Set();
-  mkConf = "";
-  document.querySelectorAll("#mkTraps .mk-chip").forEach(c => c.classList.remove("on"));
-  document.querySelectorAll("#mkConf .mk-conf-opt").forEach(c => c.classList.remove("on"));
+  MK_FIELDS.forEach(id => { $(id).value = (draft && draft[id]) || ""; });
+  if (!draft) $("mkApproach").value = "1. \n2. ";
+  mkTraps = new Set((draft && draft.traps) || []);
+  mkConf = (draft && draft.conf) || "";
+  document.querySelectorAll("#mkTraps .mk-chip").forEach(c => c.classList.toggle("on", mkTraps.has(c.dataset.trap)));
+  document.querySelectorAll("#mkConf .mk-conf-opt").forEach(c => c.classList.toggle("on", !!mkConf && c.dataset.conf === mkConf));
 
   // vocab words: reset, and call it out when this is a Words in Context question
   mkVocab.length = 0;
+  if (draft && Array.isArray(draft.vocab)) mkVocab.push(...draft.vocab);
   $("mkVocabWord").value = "";
   $("mkVocabDef").value = "";
   renderVocabList("mkVocabList", mkVocab);
@@ -2357,26 +2464,127 @@ function openMistakeLog() {
 
   $("mkCount").textContent = `0 / ${MIN_REFLECT_CHARS} characters`;
   $("mkCount").classList.remove("ok");
-  mkDone = false;
-  mkRemaining = MIN_REFLECT_SEC;
+  // A reload restarts the countdown from whatever time was still owed, so reloading
+  // never shortens the reflection — it only costs the seconds already banked.
+  mkOwedSec = resume ? Math.max(0, Math.min(MIN_REFLECT_SEC, Number(resume.remainingSec) || 0)) : MIN_REFLECT_SEC;
+  mkPriorSec = (resume && resume.spentSec) || 0;
+  mkDone = mkOwedSec === 0;
+  mkRemaining = mkOwedSec;
   mkStartMs = Date.now();
-  $("mkTimer").classList.remove("done");
+  $("mkTimer").classList.toggle("done", mkDone);
   $("mkClock").textContent = fmtClock(mkRemaining);
-  $("mkNote").textContent = "Minimum reflection time remaining. Use it to reread the passage and rationale.";
+  $("mkNote").textContent = mkDone
+    ? "Minimum time met ✓ — finish every section and save."
+    : "Minimum reflection time remaining. Use it to reread the passage and rationale.";
   $("mkSubmit").disabled = true;
   clearInterval(mkInt);
   mkInt = setInterval(() => {
-    mkRemaining = Math.max(0, MIN_REFLECT_SEC - Math.floor((Date.now() - mkStartMs) / 1000));
+    mkRemaining = Math.max(0, mkOwedSec - Math.floor((Date.now() - mkStartMs) / 1000));
     $("mkClock").textContent = fmtClock(mkRemaining);
     if (mkRemaining === 0 && !mkDone) {
       mkDone = true;
       $("mkTimer").classList.add("done");
       $("mkNote").textContent = "Minimum time met ✓ — finish every section and save.";
-      clearInterval(mkInt);
     }
     validateMistake();
   }, 500);
+  validateMistake();
   box.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* The pending log is mirrored to storage while it's being written, so a refresh,
+   a crash, or a closed tab drops the student back into it instead of past it. */
+function mkSpentSec() { return mkPriorSec + Math.floor((Date.now() - mkStartMs) / 1000); }
+function savePendingMistake(force) {
+  if (!pendingAttempt) return;
+  const draft = {
+    mkText: $("mkText").value,
+    mkConcept: $("mkConcept").value,
+    mkApproach: $("mkApproach").value,
+    mkSimilar: $("mkSimilar").value,
+    traps: [...mkTraps],
+    conf: mkConf,
+    vocab: mkVocab.slice()
+  };
+  state.pendingMistake = {
+    attempt: pendingAttempt,
+    remainingSec: mkRemaining,
+    spentSec: mkSpentSec(),
+    draft
+  };
+  // The tick runs twice a second for minutes on end — only write when the draft
+  // actually changed (at most every 3s), plus a 10s heartbeat for the clock.
+  const sig = JSON.stringify(draft);
+  const now = Date.now();
+  const changed = sig !== savePendingMistake._sig;
+  if (force || (changed && now - (savePendingMistake._at || 0) > 3000) || now - (savePendingMistake._at || 0) > 10000) {
+    savePendingMistake._sig = sig;
+    savePendingMistake._at = now;
+    save();
+  }
+}
+
+// Reopen an unfinished mistake log on load, with the question locked in its
+// answered state. Returns true if a log was restored.
+function resumePendingMistake() {
+  const pm = state.pendingMistake;
+  if (!pm || !pm.attempt || !qById.get(pm.attempt.id)) { state.pendingMistake = null; return false; }
+  openQuiz(pm.attempt.id);
+  if (!quizOpen) return false;
+
+  checked = true;
+  clearInterval(qTimerInt);
+  qElapsedSec = pm.attempt.timeSec || 0;
+  $("qzTimer").textContent = fmtClock(qElapsedSec);
+  wrongTries = (pm.attempt.wrongTries || []).slice();
+  wrongTries.forEach(L => { const el = choiceEl(L); if (el) el.classList.add("tried-wrong"); });
+  document.querySelectorAll("#qzChoices .choice").forEach(c => { c.disabled = true; });
+  document.querySelectorAll(".elim-btn, .elim-undo").forEach(b => b.disabled = true);
+  const corr = choiceEl(activeQ.correct);
+  if (corr) corr.classList.add("reveal-correct");
+
+  const banner = $("qzBanner");
+  banner.className = "qz-banner bad";
+  banner.textContent = "Unfinished mistake log — reloading doesn't skip it. Complete it below to continue.";
+  $("qzRationale").innerHTML = `<h4>RATIONALE</h4>${esc(activeQ.rationale)}`;
+  $("qzRationale").classList.remove("hidden");
+  $("qzExplain").disabled = false;
+
+  pendingAttempt = pm.attempt;
+  activeIsReview = pm.attempt.mode === "review";
+  $("qzCheck").disabled = true;
+  $("qzCheck").textContent = "Complete mistake log to continue";
+  openMistakeLog(pm);
+  return true;
+}
+
+// Reopen a question that was abandoned after a wrong pick but before the mistake
+// log appeared — the burned choices come back with it.
+function resumePendingQuestion() {
+  const pq = state.pendingQuestion;
+  if (!pq || !qById.get(pq.id) || !(pq.wrongTries || []).length) { state.pendingQuestion = null; return false; }
+  openQuiz(pq.id);
+  if (!quizOpen) return false;
+
+  activeIsReview = pq.mode === "review";
+  wrongTries = pq.wrongTries.slice();
+  wrongTries.forEach(L => { const el = choiceEl(L); if (el) el.classList.add("tried-wrong"); });
+  qStartAt = pq.at || qStartAt;
+  qStartMs = Date.now() - (pq.timeSec || 0) * 1000; // the clock keeps running from where it stopped
+  state.pendingQuestion = pq;
+
+  const banner = $("qzBanner");
+  banner.className = "qz-banner bad";
+  banner.textContent = "✗ Incorrect — try again. Reloading doesn't retire the question.";
+  $("qzCheck").disabled = true;
+  save();
+  return true;
+}
+
+// Boot/sync entry point. A half-written mistake log wins over the bare question
+// record, since the log is the later — and stricter — of the two states.
+function resumeUnfinished() {
+  return resumePendingMistake() || resumePendingQuestion();
 }
 
 function mkCharCount() {
@@ -2389,6 +2597,7 @@ function validateMistake() {
   cEl.classList.toggle("ok", chars >= MIN_REFLECT_CHARS && !!mkConf);
   const ready = mkDone && chars >= MIN_REFLECT_CHARS && !!mkConf && $("mkText").value.trim().length > 0;
   $("mkSubmit").disabled = !ready;
+  savePendingMistake();
 }
 MK_FIELDS.forEach(id => $(id).addEventListener("input", validateMistake));
 document.querySelectorAll("#mkTraps .mk-chip").forEach(chip => {
@@ -2418,17 +2627,26 @@ $("mkSubmit").addEventListener("click", () => {
     confidence: mkConf,
     vocab: mkVocab.slice(),
     underlined: underlinedFromPassage(),
-    seconds: Math.floor((Date.now() - mkStartMs) / 1000),
+    seconds: mkSpentSec(),
     text: $("mkText").value.trim() // legacy/back-compat
   };
   state.attempts.push(pendingAttempt);
   pendingAttempt = null;
+  state.pendingMistake = null;
+  clearInterval(mkInt);
   save();
   toast("Mistake log saved");
   closeQuiz();
 });
 
 function closeQuiz() {
+  // An open mistake log has to be finished — leaving the question (or reloading)
+  // isn't a way out of it.
+  if (state.pendingMistake) {
+    toast("Finish your mistake log first");
+    $("mistakeBox").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
   clearInterval(qTimerInt);
   clearInterval(mkInt);
   quizOpen = false;
@@ -3353,10 +3571,22 @@ function mergeStates(older, newer) {
   }
   const rushRuns = [...runMap.values()].sort((p, q) => (String(p.at) < String(q.at) ? -1 : 1));
 
+  // An unfinished mistake log follows the student across devices — unless the
+  // matching attempt already landed, which means it was finished somewhere else.
+  let pendingMistake = b.pendingMistake || a.pendingMistake || null;
+  if (pendingMistake && byKey.has(key(pendingMistake.attempt || {}))) pendingMistake = null;
+
+  let pendingQuestion = b.pendingQuestion || a.pendingQuestion || null;
+  if (pendingQuestion && attempts.some(x => x.id === pendingQuestion.id && String(x.at) > String(pendingQuestion.at || ""))) {
+    pendingQuestion = null; // finished on the other device
+  }
+
   return {
     ...b,
     attempts,
     wrong,
+    pendingMistake,
+    pendingQuestion,
     seen: { ...a.seen, ...b.seen },
     marked: { ...a.marked, ...b.marked },
     highlights: { ...a.highlights, ...b.highlights },
@@ -3418,7 +3648,11 @@ async function pullCloud(announce) {
     if (JSON.stringify(merged) !== JSON.stringify(normalizeState(state))) {
       state = merged;
       save(); // persists locally and schedules a push of the merged result
-      if ($("quiz").classList.contains("hidden")) { newGame(true); updatePoolPill(); }
+      if ($("quiz").classList.contains("hidden")) {
+        newGame(true);
+        updatePoolPill();
+        resumeUnfinished(); // work left open on another device is still owed
+      }
       if (announce) toast(`Synced — ${state.attempts.length} attempts on this account.`);
     } else {
       lastSyncedAt = new Date();
@@ -3772,6 +4006,13 @@ $("qbankGrid").addEventListener("click", e => {
 
 // Jump straight to any catalog question, abandoning the current one (not recorded).
 function jumpToQuestion(id) {
+  // ...but a question that's already been missed can't be abandoned — finish it
+  // (and its mistake log) first, otherwise the bank is a free skip button.
+  if (state.pendingMistake || state.pendingQuestion) {
+    closeQbank();
+    toast(state.pendingMistake ? "Finish your mistake log first" : "Finish the current question first");
+    return;
+  }
   closeQbank();
   if (quizOpen) {
     clearInterval(qTimerInt); clearInterval(mkInt);
@@ -4088,9 +4329,20 @@ window.__sat = {
   setInterval_: n => { state.settings.interval = n; save(); updateGameUI(); }
 };
 
+/* Closing or reloading mid-log is a warning, not an exit — the log is saved and
+   comes straight back on the next load. */
+window.addEventListener("beforeunload", e => {
+  if (!state.pendingMistake && !state.pendingQuestion) return;
+  if (state.pendingMistake) savePendingMistake(true); else save();
+  e.preventDefault();
+  e.returnValue = "";
+  return "";
+});
+
 /* ================= Boot ================= */
 newGame(true);
 updatePoolPill();
+resumeUnfinished();
 })();
 </script>
 </body>
