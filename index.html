@@ -134,6 +134,17 @@
   .qmeter .bar { height: 12px; border: 2px solid var(--w-ink); border-radius: 999px; background: var(--w-cream); overflow: hidden; }
   .qmeter .fill { height: 100%; background: var(--w-lime); width: 0%; transition: width 0.25s; }
 
+  /* — Questions-only mode: replaces the board when the 2048 game is switched off — */
+  .practice-panel { position: relative; z-index: 1; }
+  .practice-card {
+    border: 2.5px solid var(--w-ink); border-radius: 26px; background: var(--w-paper);
+    box-shadow: 6px 6px 0 var(--w-ink); padding: 40px 34px; text-align: center;
+  }
+  .practice-card .sticker { margin-bottom: 14px; }
+  .practice-card h2 { margin: 0 0 10px; font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; }
+  .practice-card p { margin: 0 0 22px; font-size: 0.86rem; line-height: 1.6; color: var(--w-mut); }
+  .practice-card .btn { font-size: 0.9rem; padding: 13px 26px; }
+
   .board-wrap { position: relative; }
   /* decorative rings peeking out from behind the board's left edge — kept clear of the
      progress meter above it (it used to overlap the bar) */
@@ -1021,6 +1032,104 @@
   .acct-status b { color: var(--ink); }
   .acct-forgot { background: none; border: none; padding: 0; margin-top: 12px; font: inherit; font-size: 0.8rem; color: var(--muted); text-decoration: underline; cursor: pointer; display: inline-block; }
   .acct-forgot:hover { color: var(--ink); }
+  .acct-role-note { font-size: 0.78rem; color: var(--w-mut); margin: 8px 0 0; line-height: 1.5; }
+
+  /* ---- Share with a teacher (student account sheet) ---- */
+  .tshare { border-top: 2px dashed var(--w-line); margin-top: 18px; padding-top: 18px; }
+  .tshare-add { display: flex; gap: 8px; }
+  .tshare-add input { flex: 1; min-width: 0; }
+  .tshare-add .btn { white-space: nowrap; }
+  .tshare-list { margin-top: 12px; }
+  .tshare-list:empty { display: none; }
+  .tshare-row {
+    display: flex; align-items: center; gap: 10px; border: 2px solid var(--w-ink); border-radius: 12px;
+    background: #fff; padding: 9px 8px 9px 14px; margin-bottom: 8px; font-size: 0.88rem;
+  }
+  .tshare-row .tshare-who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; font-weight: 700; }
+  .tshare-row .tshare-since { font-size: 0.72rem; color: var(--w-mut); font-weight: 600; white-space: nowrap; }
+  .tshare-remove { background: none; border: none; font-size: 0.74rem; font-weight: 800; color: var(--red); text-decoration: underline; padding: 4px 8px; }
+  .tshare-remove:hover { color: var(--w-ink); }
+
+  /* ---- Teacher comments in the review overlay (Bluebook chrome) ---- */
+  .rv-comments { border: 2px solid var(--bb-blue); margin-bottom: 16px; font-family: var(--bb-sans); }
+  .rv-comments .rv-rhead { background: var(--bb-blue); color: #fff; padding: 8px 14px; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+  .rv-comments .rv-rbody { padding: 12px 14px; }
+  .cmt { border: 1px solid var(--bb-ink); border-radius: 8px; padding: 10px 13px; margin-bottom: 10px; background: #fff; }
+  .cmt:last-child { margin-bottom: 0; }
+  .cmt-meta { display: flex; align-items: baseline; gap: 8px; font-size: 0.7rem; color: var(--bb-gray); margin-bottom: 5px; }
+  .cmt-meta b { color: var(--bb-ink); font-size: 0.78rem; }
+  .cmt-meta .cmt-del { margin-left: auto; background: none; border: none; font-size: 0.7rem; color: var(--bb-red); text-decoration: underline; padding: 0; }
+  .cmt-body { font-size: 0.9rem; line-height: 1.55; white-space: pre-wrap; color: var(--bb-ink); }
+  .cmt-empty { font-size: 0.85rem; color: var(--bb-gray); }
+  .cmt-compose { margin-top: 12px; }
+  .cmt-compose textarea {
+    width: 100%; border: 1px solid var(--bb-ink); border-radius: 8px; padding: 11px 14px; min-height: 74px;
+    font-family: var(--bb-sans); font-size: 0.92rem; line-height: 1.55; resize: vertical; background: #fff; color: var(--bb-ink);
+  }
+  .cmt-compose textarea:focus { outline: none; border: 2px solid var(--bb-blue); padding: 10px 13px; }
+  .cmt-compose .cmt-send { margin-top: 8px; }
+
+  /* ---- Teacher dashboard (Wrapped-party theme, mirrors the student shell) ---- */
+  .tstu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; position: relative; z-index: 1; }
+  .tstu-card {
+    background: var(--w-paper); border: 2.5px solid var(--w-ink); border-radius: 22px; box-shadow: 5px 5px 0 var(--w-ink);
+    padding: 0 0 16px; text-align: left; font-family: var(--w-font); color: var(--w-ink); cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .tstu-card:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--w-ink); }
+  .tstu-card:focus-visible { outline: 3px solid var(--w-lime-deep); outline-offset: 3px; }
+  .tstu-card .tstu-who {
+    display: inline-block; margin: 16px 18px 4px; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase;
+    background: var(--w-ink); color: var(--w-cream); padding: 4px 11px; border-radius: 7px; font-weight: 800; transform: rotate(-1.5deg);
+    max-width: calc(100% - 36px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .tstu-card .tstu-acc { font-size: 2.5rem; font-weight: 900; line-height: 1.05; padding: 8px 18px 0; font-variant-numeric: tabular-nums; }
+  .tstu-card .tstu-acc small { font-size: 1rem; font-weight: 800; color: var(--w-mut); }
+  .tstu-card .acc-bar { margin: 10px 18px; }
+  .tstu-card .tstu-meta { display: flex; justify-content: space-between; padding: 0 18px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--w-mut); }
+  .tstu-card .tstu-meta b { display: block; font-size: 1.05rem; color: var(--w-ink); font-weight: 900; }
+  .tstu-card .tstu-last { padding: 12px 18px 0; font-size: 0.7rem; font-weight: 700; color: var(--w-mut); border-top: 2px dashed var(--w-line); margin-top: 12px; }
+  .tstu-empty {
+    border: 2.5px solid var(--w-ink); border-radius: 26px; background: var(--w-paper); box-shadow: 6px 6px 0 var(--w-ink);
+    padding: 40px 34px; text-align: center; position: relative; z-index: 1;
+  }
+  .tstu-empty h2 { margin: 14px 0 10px; font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; }
+  .tstu-empty p { margin: 0 auto; max-width: 520px; font-size: 0.86rem; line-height: 1.6; color: var(--w-mut); }
+  .tstu-empty code { background: var(--w-cream); border: 1px solid var(--w-line); border-radius: 6px; padding: 1px 6px; font-size: 0.8rem; }
+
+  /* student detail */
+  .tdet-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; position: relative; z-index: 1; }
+  .tdet-head .btn { flex: 0 0 auto; }
+  .tdet-who { font-size: 1.35rem; font-weight: 900; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+  .tdet-sync { font-size: 0.7rem; font-weight: 700; color: var(--w-mut); margin-left: auto; white-space: nowrap; }
+  .tsec { position: relative; z-index: 1; margin-bottom: 26px; }
+  .tsec > h3 {
+    display: inline-block; margin: 0 0 14px; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase;
+    background: var(--w-ink); color: var(--w-cream); padding: 5px 12px; border-radius: 8px; font-weight: 800; transform: rotate(-1.5deg);
+  }
+  .tmist {
+    background: var(--w-paper); border: 2.5px solid var(--w-ink); border-radius: 18px; box-shadow: 4px 4px 0 var(--w-ink);
+    padding: 14px 18px; margin-bottom: 14px; font-family: var(--w-font);
+  }
+  .tmist-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .tmist-skill { font-weight: 900; font-size: 0.95rem; }
+  .tmist-when { font-size: 0.7rem; font-weight: 700; color: var(--w-mut); }
+  .tmist-top .result-chip { margin-left: auto; border-radius: 999px; }
+  .tmist-why { font-size: 0.85rem; line-height: 1.55; color: var(--w-ink); margin: 4px 0 0; white-space: pre-wrap; }
+  .tmist-why .lbl { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--w-mut); display: block; margin-bottom: 2px; }
+  .tmist-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tmist-tags .rv-tag { border-radius: 999px; border-width: 1.5px; }
+  .tmist-foot { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .tmist-cmts { font-size: 0.72rem; font-weight: 800; color: var(--w-lime-deep); }
+  .tmist-foot .btn { margin-left: auto; padding: 8px 16px; font-size: 0.74rem; }
+  .tnote { font-size: 0.82rem; color: var(--w-mut); font-weight: 600; line-height: 1.6; position: relative; z-index: 1; }
+  /* the shared stat/table widgets pick up the Wrapped palette inside the teacher shell */
+  #teacherShell .stat-card { background: var(--w-paper); }
+  #teacherShell .stat-card .k, #teacherShell .stat-card .v small { color: var(--w-mut); }
+  #teacherShell .stats-table td { border-bottom: 1px solid var(--w-line); background: var(--w-paper); }
+  #teacherShell .pct-bar { border: 1.5px solid var(--w-ink); background: var(--w-cream); border-radius: 999px; }
+  #teacherShell .mmain { max-width: 1180px; }
+  @media (max-width: 880px) { .tdet-sync { margin-left: 0; width: 100%; } }
 
   /* ============ Question Rush ============ */
   .rush-head {
@@ -1056,6 +1165,25 @@
   .rush-bigstars .sub.pb { color: var(--green); }
   .rush-miss { display: flex; gap: 10px; align-items: baseline; font-size: 0.82rem; line-height: 1.5; padding: 8px 0; border-bottom: 1px solid var(--hair); }
   .rush-miss .result-chip { flex: 0 0 auto; }
+
+  /* ================= 2048AI ================= */
+  .ai-filelist { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .ai-file { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.05); border: 1px solid var(--hair); border-radius: 999px; padding: 4px 10px; font-size: 0.8rem; font-weight: 600; }
+  .ai-file button { border: 0; background: none; cursor: pointer; font-weight: 800; color: var(--muted); padding: 0 2px; }
+  .ai-status { margin-top: 10px; font-size: 0.85rem; color: var(--muted); min-height: 1.2em; }
+  .ai-status.err { color: var(--red); }
+  .ai-out { margin-top: 14px; border: 1px solid var(--hair); border-radius: 12px; padding: 16px 18px; background: #fff; line-height: 1.55; font-size: 0.92rem; }
+  .ai-out h3 { margin: 14px 0 6px; font-size: 1rem; }
+  .ai-out h4 { margin: 12px 0 4px; font-size: 0.9rem; }
+  .ai-out ul, .ai-out ol { margin: 6px 0 10px 22px; }
+  .ai-out li { margin: 3px 0; }
+  .ai-out p { margin: 8px 0; }
+  .ai-out code { background: rgba(0,0,0,0.07); border-radius: 4px; padding: 1px 5px; font-size: 0.85em; }
+  .ai-meta { margin-top: 10px; font-size: 0.75rem; color: var(--muted); }
+  .qz-ai { margin-top: 12px; border: 2px solid #6f6fd6; border-radius: 10px; background: #f6f6ff; padding: 12px 14px; font-size: 0.9rem; line-height: 1.5; }
+  .qz-ai .ai-hd { font-weight: 800; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: #4a49b8; margin-bottom: 6px; }
+  .qz-ai ul, .qz-ai ol { margin: 6px 0 6px 20px; }
+  .qz-ai p { margin: 6px 0; }
 </style>
 </head>
 <body>
@@ -1077,6 +1205,7 @@
       <button class="snav" id="externalBtn" title="Log external mistake"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span class="lbl">Log external mistake</span></button>
       <button class="snav" id="settingsBtn" title="Practice settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="4" x2="14" y2="4"/><line x1="10" y1="4" x2="3" y2="4"/><line x1="21" y1="12" x2="12" y2="12"/><line x1="8" y1="12" x2="3" y2="12"/><line x1="21" y1="20" x2="16" y2="20"/><line x1="12" y1="20" x2="3" y2="20"/><line x1="14" y1="2" x2="14" y2="6"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="16" y1="18" x2="16" y2="22"/></svg><span class="lbl">Practice settings</span></button>
       <button class="snav" id="statsBtn" title="Statistics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span class="lbl">Statistics</span></button>
+      <button class="snav" id="aiBtn" title="2048AI — AI mistake analysis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/></svg><span class="lbl">2048AI</span></button>
       <button class="snav" id="exportBtn" title="Export .xlsx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="lbl">Export .xlsx</span></button>
     </nav>
     <div class="sbar-label">Backup</div>
@@ -1100,10 +1229,10 @@
     <header class="mhead">
       <div>
         <span class="sticker">SAT 2048 · Question Rush 🎉</span>
-        <h1 class="mtitle">It's time for <em>the questions.</em></h1>
-        <p class="msub">Merge tiles, earn SAT questions, log every miss.</p>
+        <h1 class="mtitle" id="mTitle">It's time for <em>the questions.</em></h1>
+        <p class="msub" id="mSub">Merge tiles, earn SAT questions, log every miss.</p>
       </div>
-      <div class="scores">
+      <div class="scores" id="scoresBox">
         <div class="scorebox"><div class="lbl">Score</div><div class="val" id="score">0</div></div>
         <div class="scorebox best"><div class="lbl">Best</div><div class="val" id="best">0</div></div>
       </div>
@@ -1111,12 +1240,12 @@
 
     <div class="mgrid">
       <div class="board-col">
-        <div class="qmeter">
+        <div class="qmeter" id="qmeterBox">
           <div class="row"><span>Next SAT question</span><span id="qmeterLabel"></span></div>
           <div class="bar"><div class="fill" id="qmeterFill"></div></div>
         </div>
 
-        <div class="board-wrap">
+        <div class="board-wrap" id="boardWrap">
           <div class="board" id="board">
             <div class="cells">
               <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
@@ -1131,7 +1260,16 @@
             </div>
           </div>
         </div>
-        <p class="hint">Arrow keys / WASD to move · swipe on touch screens</p>
+        <p class="hint" id="boardHint">Arrow keys / WASD to move · swipe on touch screens</p>
+
+        <div class="practice-panel hidden" id="practicePanel">
+          <div class="practice-card">
+            <span class="sticker">Questions only</span>
+            <h2>The 2048 game is off.</h2>
+            <p>No tiles, no merges — questions come to you back-to-back. Answer, review the rationale (and log any mistake), then grab the next one whenever you're ready.</p>
+            <button class="btn primary" id="practiceNextBtn">Get a question</button>
+          </div>
+        </div>
       </div>
 
       <aside class="dash">
@@ -1166,6 +1304,40 @@
         </div>
       </aside>
     </div>
+  </main>
+</div>
+
+<!-- ================= TEACHER DASHBOARD ================= -->
+<div class="mshell hidden" id="teacherShell">
+  <aside class="sbar">
+    <div class="sbar-brand">
+      <div class="sbar-mark"><span></span><span></span><span></span><span></span></div>
+      <div class="sbar-id">
+        <div class="sbar-name">SAT <em>2048</em></div>
+        <span class="sbar-sub">Teacher</span>
+      </div>
+    </div>
+    <div class="sbar-label">Tools</div>
+    <nav class="sbar-nav">
+      <button class="snav accent" id="tOverviewBtn" title="All students"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="lbl">Students</span></button>
+      <button class="snav" id="tRefreshBtn" title="Refresh student data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"/><path d="M21 3v5h-5"/></svg><span class="lbl">Refresh data</span></button>
+      <button class="snav" id="tAccountBtn" title="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="lbl">Account</span></button>
+    </nav>
+    <p class="sbar-note">Students add you from their <b>Account &amp; sync</b> sheet using your teacher email. Their attempts and mistake logs appear here read-only; your comments show up in their review view.</p>
+    <div class="sbar-last" id="tSyncStatus"></div>
+    <div class="sbar-foot">Read · Comment · Coach</div>
+  </aside>
+
+  <main class="mmain">
+    <div class="deco deco-dots"></div>
+    <header class="mhead">
+      <div>
+        <span class="sticker">SAT 2048 · Teacher dashboard 🍎</span>
+        <h1 class="mtitle" id="tTitle">How are <em>your students</em> doing?</h1>
+        <p class="msub" id="tSub">Every attempt, mistake log, and reflection — as they practice.</p>
+      </div>
+    </header>
+    <div id="tContent"></div>
   </main>
 </div>
 
@@ -1330,6 +1502,7 @@
         <div id="qzChoices"></div>
         <div class="qz-banner" id="qzBanner"></div>
         <div class="qz-rationale hidden" id="qzRationale"></div>
+        <div class="qz-ai hidden" id="qzAiPanel"></div>
         <span class="qz-tag" id="qzTag"></span>
       </div>
     </div>
@@ -1341,6 +1514,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15l7-7 7 7"/></svg>
     </button>
     <div class="qz-bottom-right">
+      <button class="pillbtn" id="qzAiBtn">AI Hint</button>
       <button class="pillbtn" id="qzExplain" disabled>Explanation</button>
       <button class="pillbtn blue" id="qzCheck" disabled>Check Answer</button>
     </div>
@@ -1391,6 +1565,7 @@
         <div id="rvChoices"></div>
         <div class="qz-rationale" id="rvRationale"></div>
         <div class="rv-reflection hidden" id="rvReflection"></div>
+        <div class="rv-comments hidden" id="rvComments"></div>
       </div>
     </div>
   </div>
@@ -1409,6 +1584,14 @@
     <div class="sheet-head"><h2>Practice Settings</h2><button class="sheet-close" data-close="settingsOverlay">✕</button></div>
     <div class="sheet-body">
       <div class="set-row">
+        <h3>Play style</h3>
+        <p class="desc">Earn questions by playing 2048, or skip the game and work through questions back-to-back.</p>
+        <div class="subj-tabs" id="playModeTabs">
+          <button type="button" class="subj-tab on" data-mode="game">2048 game</button>
+          <button type="button" class="subj-tab" data-mode="practice">Questions only</button>
+        </div>
+      </div>
+      <div class="set-row" id="intervalRow">
         <h3>Question frequency</h3>
         <p class="desc">How many board moves between SAT questions.</p>
         <div class="slider-row">
@@ -1439,6 +1622,7 @@
       <div style="display:flex;gap:8px">
         <button class="btn" id="statsBackupBtn">Save backup</button>
         <button class="btn" id="statsExportBtn">Export .xlsx</button>
+        <button class="btn blue" id="statsAiBtn">2048AI analysis</button>
       </div>
     </div>
   </div>
@@ -1456,6 +1640,14 @@
 
       <div id="acctSignedOut" class="hidden">
         <p class="ext-intro">Create a free account to keep your progress in the cloud — attempts, mistake logs, highlights, vocab, and stats sync automatically, so you can pick up on your phone exactly where you left off.</p>
+        <div class="ext-field">
+          <label>Account type <span class="ext-opt">(for new accounts)</span></label>
+          <div class="subj-tabs" id="acctRoleTabs">
+            <button type="button" class="subj-tab on" data-role="student">Student</button>
+            <button type="button" class="subj-tab" data-role="teacher">Teacher</button>
+          </div>
+          <p class="acct-role-note" id="acctRoleNote">Students practice and sync progress. Only matters when creating an account — signing in always uses the type you picked originally.</p>
+        </div>
         <div class="ext-field">
           <label for="acctEmail">Email</label>
           <input id="acctEmail" type="email" autocomplete="email" placeholder="you@example.com" />
@@ -1478,9 +1670,58 @@
           <button class="btn blue" id="acctSyncNow">Sync now</button>
           <button class="btn" id="acctSignOut">Sign out</button>
         </div>
+
+        <div class="tshare hidden" id="tshareBox">
+          <div class="ext-field">
+            <label for="tshareEmail">Share with a teacher</label>
+            <p class="acct-role-note" style="margin:0 0 10px">A linked teacher can see your attempts, mistake logs, and stats (read-only) on their dashboard, and leave comments on your questions. You can remove them any time.</p>
+            <div class="tshare-add">
+              <input id="tshareEmail" type="email" placeholder="teacher@school.org" />
+              <button type="button" class="btn" id="tshareAdd">Add teacher</button>
+            </div>
+            <div class="tshare-list" id="tshareList"></div>
+          </div>
+        </div>
       </div>
 
       <p class="acct-msg" id="acctMsg"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 2048AI ================= -->
+<div class="overlay hidden" id="aiOverlay">
+  <div class="sheet">
+    <div class="sheet-head"><h2>2048AI — Mistake Analysis</h2><button class="sheet-close" data-close="aiOverlay">✕</button></div>
+    <div class="sheet-body ext-form">
+
+      <div class="ext-field">
+        <label for="aiKeyInput">Claude API key <span class="ext-opt">(stored only on this device — never synced or backed up)</span></label>
+        <div class="vocab-add">
+          <input id="aiKeyInput" type="password" placeholder="sk-ant-..." autocomplete="off" />
+          <button type="button" class="btn" id="aiKeySave">Save key</button>
+        </div>
+        <div class="vocab-note">Get a key at <b>console.anthropic.com</b> → API keys. Analysis runs on Claude Haiku 4.5 — a full analysis typically costs under a cent.</div>
+      </div>
+
+      <div class="ext-field">
+        <label>Model</label>
+        <div class="subj-tabs" id="aiModelTabs">
+          <button type="button" class="subj-tab on" data-model="claude-haiku-4-5">Haiku 4.5 · cheapest</button>
+          <button type="button" class="subj-tab" data-model="claude-sonnet-4-6">Sonnet 4.6 · smarter, ~3× cost</button>
+        </div>
+      </div>
+
+      <div class="ext-field">
+        <label>Score report PDFs <span class="ext-opt">(optional — practice test or real SAT score sheets)</span></label>
+        <input id="aiPdfInput" type="file" accept="application/pdf" multiple />
+        <div class="ai-filelist" id="aiFileList"></div>
+        <div class="vocab-note">Attach College Board score reports or practice-test score sheets. The AI reads them alongside your mistake log to tell you what to study across both sections. PDFs are sent to the Claude API for this analysis only — nothing is stored.</div>
+      </div>
+
+      <button class="pillbtn blue" id="aiAnalyzeBtn">Analyze my mistakes</button>
+      <div class="ai-status" id="aiStatus"></div>
+      <div class="ai-out hidden" id="aiOut"></div>
     </div>
   </div>
 </div>
@@ -1820,7 +2061,7 @@ function defaultState() {
   const skills = {};
   for (const [, sm] of DOMAIN_SKILLS) for (const [sk] of sm) skills[sk] = true;
   return {
-    settings: { interval: 12, skills },
+    settings: { interval: 12, skills, practiceOnly: false },
     seen: {},
     wrong: {},          // id -> {count, lastWrongAt, lastReviewedAt}
     attempts: [],       // {id, at, mode, ans, correctLetter, ok, timeSec, marked, reflection}
@@ -1982,7 +2223,7 @@ function canMove() {
 }
 const VECTORS = { up: [0, -1], right: [1, 0], down: [0, 1], left: [-1, 0] };
 function move(dir) {
-  if (quizOpen || rushOpen || over || animating) return;
+  if (quizOpen || rushOpen || over || animating || state.settings.practiceOnly) return;
   const [vx, vy] = VECTORS[dir];
   const xs = [...Array(SIZE).keys()]; if (vx === 1) xs.reverse();
   const ys = [...Array(SIZE).keys()]; if (vy === 1) ys.reverse();
@@ -2186,7 +2427,13 @@ function openQuiz(forceId) {
   if (quizOpen) return;
   // Unfinished business comes first: an abandoned question or an open mistake log
   // is re-served instead of a new question, no matter how the quiz was reached.
-  if (!forceId && (state.pendingMistake || state.pendingQuestion)) { resumeUnfinished(); return; }
+  // If it turns out to be stale (the attempt it's guarding was already recorded —
+  // e.g. finished elsewhere before a sync caught up, or a reload raced the save),
+  // resumeUnfinished() clears it and reports nothing to resume, so fall through
+  // to serving a fresh question instead of leaving the caller stuck on nothing.
+  if (!forceId && (state.pendingMistake || state.pendingQuestion)) {
+    if (resumeUnfinished()) return;
+  }
   activeQ = forceId ? qById.get(forceId) : chooseQuestion();
   if (forceId) activeIsReview = false;
   if (!activeQ) { toast("No questions available — check Practice Settings."); return; }
@@ -2256,6 +2503,10 @@ function openQuiz(forceId) {
   $("qzBanner").textContent = "";
   $("qzRationale").classList.add("hidden");
   $("qzRationale").innerHTML = "";
+  $("qzAiPanel").classList.add("hidden");
+  $("qzAiPanel").innerHTML = "";
+  $("qzAiBtn").textContent = "AI Hint";
+  $("qzAiBtn").disabled = false;
   $("mistakeBox").classList.add("hidden");
   $("qzExplain").disabled = true;
   const chk = $("qzCheck");
@@ -2371,6 +2622,7 @@ function finalizeAnswer() {
 
   $("qzRationale").innerHTML = `<h4>RATIONALE</h4>${esc(activeQ.rationale)}`;
   $("qzExplain").disabled = false;
+  $("qzAiBtn").textContent = "AI Explain";
 
   pendingAttempt = {
     id: activeQ.id,
@@ -2524,9 +2776,25 @@ function savePendingMistake(force) {
   }
 }
 
+// A pendingMistake is stale once the attempt it's guarding has actually been
+// recorded — it was finished (e.g. the log was submitted, but a merge or a
+// reload raced the save and left the flag set), so re-asking for it would just
+// trap the student on a log they've already completed. Match on id + at since
+// that's the same pair the attempt was pushed under.
+function pendingMistakeIsStale(pm) {
+  return !!(pm && pm.attempt && state.attempts.some(x => x.id === pm.attempt.id && x.at === pm.attempt.at));
+}
+function clearStalePendingMistake() {
+  if (!pendingMistakeIsStale(state.pendingMistake)) return false;
+  state.pendingMistake = null;
+  save();
+  return true;
+}
+
 // Reopen an unfinished mistake log on load, with the question locked in its
 // answered state. Returns true if a log was restored.
 function resumePendingMistake() {
+  if (clearStalePendingMistake()) return false;
   const pm = state.pendingMistake;
   if (!pm || !pm.attempt || !qById.get(pm.attempt.id)) { state.pendingMistake = null; return false; }
   openQuiz(pm.attempt.id);
@@ -2641,8 +2909,9 @@ $("mkSubmit").addEventListener("click", () => {
 
 function closeQuiz() {
   // An open mistake log has to be finished — leaving the question (or reloading)
-  // isn't a way out of it.
-  if (state.pendingMistake) {
+  // isn't a way out of it. But if it's stale (already completed elsewhere), don't
+  // let it block the exit — that's the trapped-with-no-way-out case.
+  if (state.pendingMistake && !clearStalePendingMistake()) {
     toast("Finish your mistake log first");
     $("mistakeBox").scrollIntoView({ behavior: "smooth", block: "start" });
     return;
@@ -2848,10 +3117,29 @@ $("hlBtn").addEventListener("click", () => {
   else toast("Select text in the passage or question, then pick a color.");
 });
 
+/* ================= Play style (2048 game vs questions-only) ================= */
+// Swaps the board out for a plain "get a question" panel — for practicing
+// without needing to play 2048 to earn each question.
+function applyPlayMode() {
+  const on = !!state.settings.practiceOnly;
+  $("qmeterBox").classList.toggle("hidden", on);
+  $("boardWrap").classList.toggle("hidden", on);
+  $("boardHint").classList.toggle("hidden", on);
+  $("practicePanel").classList.toggle("hidden", !on);
+  $("scoresBox").classList.toggle("hidden", on);
+  $("mSub").textContent = on
+    ? "Questions only — no tiles, no merges, just practice."
+    : "Merge tiles, earn SAT questions, log every miss.";
+}
+$("practiceNextBtn").addEventListener("click", () => openQuiz());
+
 /* ================= Settings ================= */
 function openSettings() {
   $("intervalRange").value = state.settings.interval;
   $("intervalVal").textContent = state.settings.interval + " moves";
+  document.querySelectorAll("#playModeTabs .subj-tab").forEach(t =>
+    t.classList.toggle("on", t.dataset.mode === (state.settings.practiceOnly ? "practice" : "game")));
+  $("intervalRow").classList.toggle("hidden", state.settings.practiceOnly);
   const box = $("domainGroups");
   box.innerHTML = "";
   for (const [domain, skillsMap] of DOMAIN_SKILLS) {
@@ -2903,14 +3191,21 @@ document.addEventListener("change", e => {
 $("intervalRange").addEventListener("input", () => {
   $("intervalVal").textContent = $("intervalRange").value + " moves";
 });
+document.querySelectorAll("#playModeTabs .subj-tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll("#playModeTabs .subj-tab").forEach(o => o.classList.toggle("on", o === t));
+    $("intervalRow").classList.toggle("hidden", t.dataset.mode === "practice");
+  });
+});
 $("settingsSave").addEventListener("click", () => {
   const checkedSkills = new Set([...document.querySelectorAll(".skill-cb:checked")].map(cb => cb.dataset.skill));
   if (!checkedSkills.size) { toast("Select at least one skill."); return; }
   for (const k of Object.keys(state.settings.skills)) state.settings.skills[k] = checkedSkills.has(k);
   state.settings.interval = parseInt($("intervalRange").value, 10);
+  state.settings.practiceOnly = document.querySelector("#playModeTabs .subj-tab.on").dataset.mode === "practice";
   save();
   $("settingsOverlay").classList.add("hidden");
-  updateGameUI(); updatePoolPill();
+  applyPlayMode(); updateGameUI(); updatePoolPill();
   toast("Settings saved");
 });
 $("settingsBtn").addEventListener("click", openSettings);
@@ -2961,7 +3256,7 @@ function openStats() {
       <td>${esc(x.skill || q.skill || "—")}</td>
       <td><span class="result-chip ${x.ok ? "ok" : "bad"}">${x.ok ? "Correct" : wrongLabel}</span></td>
       <td>${x.timeSec > 0 ? fmtClock(x.timeSec) : "—"}</td>
-      <td>${tag}${x.marked ? " ★" : ""}</td>
+      <td>${tag}${x.marked ? " ★" : ""}${commentsFor(x.id).length ? " 💬" : ""}</td>
     </tr>`;
   }).join("");
 
@@ -3484,6 +3779,281 @@ document.querySelectorAll(".overlay").forEach(o => {
   o.addEventListener("mousedown", e => { if (e.target === o) o.classList.add("hidden"); });
 });
 
+/* ================= 2048AI =================
+   AI mistake analysis + in-question tutoring via the Claude API, called
+   directly from the browser. The API key lives ONLY in localStorage on this
+   device — it is deliberately kept out of `state` so it never syncs to the
+   cloud, never lands in backup files, and never leaves the device except to
+   api.anthropic.com. */
+const AI_KEY_STORE = "sat2048.aiKey";
+const AI_MODEL_STORE = "sat2048.aiModel";
+const AI_MODELS = {
+  "claude-haiku-4-5":  { label: "Haiku 4.5",  inPerM: 1, outPerM: 5 },
+  "claude-sonnet-4-6": { label: "Sonnet 4.6", inPerM: 3, outPerM: 15 }
+};
+function aiKey() { return localStorage.getItem(AI_KEY_STORE) || ""; }
+function aiModel() {
+  const m = localStorage.getItem(AI_MODEL_STORE);
+  return AI_MODELS[m] ? m : "claude-haiku-4-5";
+}
+
+async function aiCall({ system, content, maxTokens }) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": aiKey(),
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({
+      model: aiModel(),
+      max_tokens: maxTokens || 1024,
+      system,
+      messages: [{ role: "user", content }]
+    })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401) throw new Error("Invalid API key — check it in the 2048AI panel.");
+    if (res.status === 429) throw new Error("Rate limited — wait a minute and try again.");
+    throw new Error((data.error && data.error.message) || `HTTP ${res.status}`);
+  }
+  const text = (data.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
+  return { text, usage: data.usage || {}, truncated: data.stop_reason === "max_tokens" };
+}
+
+/* Tiny markdown → HTML for AI responses. Escapes everything first, so model
+   output can never inject markup. */
+function aiMd(md) {
+  const lines = esc(md).split("\n");
+  let out = "", list = null, para = [];
+  const inline = s => s
+    .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
+  const flushPara = () => { if (para.length) { out += `<p>${inline(para.join(" "))}</p>`; para = []; } };
+  const flushList = () => { if (list) { out += `</${list}>`; list = null; } };
+  for (const raw of lines) {
+    const l = raw.trim();
+    let m;
+    if (!l) { flushPara(); flushList(); continue; }
+    if ((m = l.match(/^#{1,3}\s+(.*)/)))       { flushPara(); flushList(); out += `<h3>${inline(m[1])}</h3>`; }
+    else if ((m = l.match(/^#{4,6}\s+(.*)/)))  { flushPara(); flushList(); out += `<h4>${inline(m[1])}</h4>`; }
+    else if ((m = l.match(/^[-*]\s+(.*)/)))    { flushPara(); if (list !== "ul") { flushList(); out += "<ul>"; list = "ul"; } out += `<li>${inline(m[1])}</li>`; }
+    else if ((m = l.match(/^\d+[.)]\s+(.*)/))) { flushPara(); if (list !== "ol") { flushList(); out += "<ol>"; list = "ol"; } out += `<li>${inline(m[1])}</li>`; }
+    else para.push(l);
+  }
+  flushPara(); flushList();
+  return out;
+}
+
+function htmlToText(html) { const d = document.createElement("div"); d.innerHTML = html || ""; return d.textContent.trim(); }
+const aiTrim = s => (s || "").length > 300 ? s.slice(0, 300) + "…" : (s || "");
+
+/* Compact summary of everything the app knows about the student's practice. */
+function buildAiSummary() {
+  const a = state.attempts;
+  const agg = key => {
+    const m = {};
+    for (const x of a) {
+      const k = x[key] || (qById.get(x.id) || {})[key] || "—";
+      m[k] = m[k] || { asked: 0, ok: 0, sec: 0 };
+      m[k].asked++; if (x.ok) m[k].ok++; m[k].sec += x.timeSec || 0;
+    }
+    for (const k in m) { m[k].accuracy = pct(m[k].ok, m[k].asked) + "%"; m[k].avgSec = Math.round(m[k].sec / m[k].asked); delete m[k].sec; }
+    return m;
+  };
+  const traps = {}, conf = {}, vocab = [];
+  for (const x of a) {
+    const r = x.reflection; if (!r) continue;
+    for (const t of (r.traps || [])) traps[t] = (traps[t] || 0) + 1;
+    if (r.confidence) conf[r.confidence] = (conf[r.confidence] || 0) + 1;
+    for (const v of (r.vocab || [])) vocab.push(v.word || v);
+  }
+  const wrongDetail = a.filter(x => !x.ok).slice(-25).map(x => {
+    const q = qById.get(x.id) || {};
+    return {
+      skill: x.skill || q.skill, difficulty: x.difficulty || q.difficulty || undefined,
+      picked: (x.wrongTries && x.wrongTries.length) ? x.wrongTries : [x.ans],
+      correct: x.correctLetter, timeSec: x.timeSec || undefined,
+      question: aiTrim(htmlToText(q.stem || (x.ext && x.ext.stem) || "")),
+      whyWrong: aiTrim(x.reflection && x.reflection.whyWrong) || undefined,
+      conceptMissed: aiTrim(x.reflection && x.reflection.concept) || undefined,
+      external: x.mode === "external" ? ((x.ext && x.ext.source) || true) : undefined
+    };
+  });
+  const rushRuns = ((state.rush && state.rush.runs) || []).slice(-10);
+  const timed = a.filter(x => x.timeSec > 0);
+  return {
+    totals: {
+      answered: a.length,
+      correct: a.filter(x => x.ok).length,
+      avgTimeSec: timed.length ? Math.round(timed.reduce((s, x) => s + x.timeSec, 0) / timed.length) : 0,
+      reviewQueueSize: Object.keys(state.wrong).length,
+      externalMistakesLogged: a.filter(x => x.mode === "external").length
+    },
+    byDomain: agg("domain"),
+    bySkill: agg("skill"),
+    byDifficulty: agg("difficulty"),
+    trapCounts: traps,
+    confidenceAfterMistakes: conf,
+    vocabWordsMissed: [...new Set(vocab)].slice(0, 60),
+    recentWrongAnswers: wrongDetail,
+    questionRushRuns: rushRuns
+  };
+}
+
+const AI_ANALYSIS_SYSTEM = `You are an expert SAT tutor. The student practices SAT Reading & Writing in an app that serves real question-bank questions and makes them write a structured mistake log (why wrong, trap fallen for, concept missed, approach next time) for every miss. You will get their full practice data as JSON, and possibly PDF score reports from practice tests or the real SAT.
+
+Analyze the data like a great tutor would — find the real patterns, not surface stats. Then respond in markdown with exactly these sections:
+## What's actually going wrong
+The 2-4 deepest patterns across their mistakes (connect trap types, skills, timing, and their own reflections — quote their reflections when telling).
+## Skill priorities
+Ranked list of the 3-5 skills to drill first, each with WHY (from their data) and one concrete drill.
+## Score report takeaways
+Only if PDFs were attached: what the score reports say to prioritize, including Math if present. Otherwise omit this section entirely.
+## Study plan for the next 2 weeks
+A realistic plan (30-45 min/day) built around their weak skills and review queue.
+## Quick wins
+2-3 habits fixable immediately (pacing, elimination discipline, reread targets).
+
+Be specific and honest. Reference their actual numbers and their own written reflections. No generic advice that would apply to any student.`;
+
+let aiPdfFiles = []; // {name, size, b64} — held in memory only, never persisted
+
+function renderAiFiles() {
+  $("aiFileList").innerHTML = aiPdfFiles.map((f, i) =>
+    `<span class="ai-file">${esc(f.name)} <button type="button" data-i="${i}" title="Remove">✕</button></span>`).join("");
+  $("aiFileList").querySelectorAll("button").forEach(b =>
+    b.addEventListener("click", () => { aiPdfFiles.splice(+b.dataset.i, 1); renderAiFiles(); }));
+}
+
+$("aiPdfInput").addEventListener("change", async e => {
+  for (const file of [...e.target.files]) {
+    if (file.size > 10 * 1024 * 1024) { toast(`${file.name} is over 10 MB — skipped`); continue; }
+    const b64 = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(",")[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+    aiPdfFiles.push({ name: file.name, size: file.size, b64 });
+  }
+  e.target.value = "";
+  renderAiFiles();
+});
+
+function aiUpdateKeyUI() {
+  $("aiKeyInput").placeholder = aiKey() ? "Key saved ✓ — paste a new one to replace it" : "sk-ant-...";
+  document.querySelectorAll("#aiModelTabs .subj-tab").forEach(t =>
+    t.classList.toggle("on", t.dataset.model === aiModel()));
+}
+$("aiKeySave").addEventListener("click", () => {
+  const v = $("aiKeyInput").value.trim();
+  if (!v) { toast("Paste your API key first"); return; }
+  localStorage.setItem(AI_KEY_STORE, v);
+  $("aiKeyInput").value = "";
+  aiUpdateKeyUI();
+  toast("API key saved on this device");
+});
+document.querySelectorAll("#aiModelTabs .subj-tab").forEach(t =>
+  t.addEventListener("click", () => { localStorage.setItem(AI_MODEL_STORE, t.dataset.model); aiUpdateKeyUI(); }));
+
+function openAi() {
+  aiUpdateKeyUI();
+  if (state.ai && state.ai.lastAnalysis) {
+    $("aiOut").innerHTML = aiMd(state.ai.lastAnalysis) +
+      `<div class="ai-meta">From ${new Date(state.ai.at).toLocaleString()} · ${esc((AI_MODELS[state.ai.model] || {}).label || state.ai.model || "")}</div>`;
+    $("aiOut").classList.remove("hidden");
+  }
+  $("aiOverlay").classList.remove("hidden");
+}
+$("aiBtn").addEventListener("click", openAi);
+$("statsAiBtn").addEventListener("click", () => { $("statsOverlay").classList.add("hidden"); openAi(); });
+
+let aiBusy = false;
+$("aiAnalyzeBtn").addEventListener("click", async () => {
+  if (aiBusy) return;
+  const status = $("aiStatus");
+  status.classList.remove("err");
+  if (!aiKey()) { status.textContent = "Save your Claude API key above first."; status.classList.add("err"); return; }
+  if (!state.attempts.length && !aiPdfFiles.length) { status.textContent = "Nothing to analyze yet — answer some questions or attach a score report."; status.classList.add("err"); return; }
+  aiBusy = true;
+  const btn = $("aiAnalyzeBtn");
+  btn.disabled = true; btn.textContent = "Analyzing…";
+  status.textContent = "Sending your mistake data" + (aiPdfFiles.length ? ` and ${aiPdfFiles.length} PDF${aiPdfFiles.length > 1 ? "s" : ""}` : "") + " to Claude…";
+  try {
+    const content = [
+      ...aiPdfFiles.map(f => ({ type: "document", source: { type: "base64", media_type: "application/pdf", data: f.b64 } })),
+      { type: "text", text: "Here is my complete practice data from the app:\n\n" + JSON.stringify(buildAiSummary()) + (aiPdfFiles.length ? "\n\nMy score report PDF(s) are attached above." : "") }
+    ];
+    const { text, usage, truncated } = await aiCall({ system: AI_ANALYSIS_SYSTEM, content, maxTokens: 4000 });
+    state.ai = { lastAnalysis: text, at: new Date().toISOString(), model: aiModel() };
+    save();
+    const M = AI_MODELS[aiModel()];
+    const cost = ((usage.input_tokens || 0) * M.inPerM + (usage.output_tokens || 0) * M.outPerM) / 1e6;
+    $("aiOut").innerHTML = aiMd(text) + `<div class="ai-meta">${usage.input_tokens || 0} in / ${usage.output_tokens || 0} out tokens · ~$${cost.toFixed(3)}${truncated ? " · response hit the length cap" : ""}</div>`;
+    $("aiOut").classList.remove("hidden");
+    status.textContent = "";
+  } catch (err) {
+    status.textContent = err.message;
+    status.classList.add("err");
+  } finally {
+    aiBusy = false;
+    btn.disabled = false; btn.textContent = "Analyze my mistakes";
+  }
+});
+
+/* ---- in-question AI tutor ---- */
+function aiQuestionPayload(revealAnswer) {
+  const q = activeQ;
+  const lines = [
+    "PASSAGE:\n" + htmlToText(q.passage || ""),
+    "QUESTION:\n" + htmlToText(q.stem || ""),
+    "CHOICES:\n" + Object.entries(q.choices).map(([L, t]) => `${L}. ${t}`).join("\n"),
+    `Skill: ${q.skill} · Difficulty: ${q.difficulty}`
+  ];
+  if (revealAnswer) {
+    lines.push(`CORRECT ANSWER: ${q.correct}`);
+    lines.push("OFFICIAL RATIONALE:\n" + htmlToText(q.rationale || ""));
+    if (wrongTries.length) lines.push(`The student picked ${wrongTries.join(", then ")} before finishing.`);
+  } else {
+    lines.push(`CORRECT ANSWER (for your reference only — do NOT reveal it or single it out): ${q.correct}`);
+    if (wrongTries.length) lines.push(`The student has already tried and missed: ${wrongTries.join(", ")}.`);
+  }
+  return lines.join("\n\n");
+}
+
+const AI_HINT_SYSTEM = `You are an SAT Reading & Writing tutor giving a mid-question hint. NEVER state or single out the correct answer, and never say which remaining choices are right or wrong. Instead: point the student at the part of the passage that matters, name the question-type strategy, and warn about the trap style this question uses. 3-5 short sentences, markdown allowed. End with one question that makes them re-check their own reasoning.`;
+const AI_EXPLAIN_SYSTEM = `You are an SAT Reading & Writing tutor. The student just finished this question (their misses are listed if they had any). Explain like a tutor at a whiteboard: (1) the one insight that cracks the question, (2) why the correct answer is right in the passage's own words, (3) for each choice they picked wrong — the specific trap it represents, (4) the reusable rule to take away, phrased so they can copy it into their mistake log. Under 250 words, markdown allowed.`;
+
+let qzAiBusy = false;
+async function qzAiHelp() {
+  if (qzAiBusy || !activeQ) return;
+  if (!aiKey()) { toast("Add your Claude API key in 2048AI first"); openAi(); return; }
+  const panel = $("qzAiPanel");
+  const explaining = checked;
+  panel.classList.remove("hidden");
+  panel.innerHTML = `<div class="ai-hd">${explaining ? "AI Explanation" : "AI Hint"}</div><p>Thinking…</p>`;
+  qzAiBusy = true;
+  $("qzAiBtn").disabled = true;
+  try {
+    const { text } = await aiCall({
+      system: explaining ? AI_EXPLAIN_SYSTEM : AI_HINT_SYSTEM,
+      content: [{ type: "text", text: aiQuestionPayload(explaining) }],
+      maxTokens: 800
+    });
+    panel.innerHTML = `<div class="ai-hd">${explaining ? "AI Explanation" : "AI Hint — answer not revealed"}</div>` + aiMd(text);
+  } catch (err) {
+    panel.innerHTML = `<div class="ai-hd">AI Tutor</div><p>${esc(err.message)}</p>`;
+  } finally {
+    qzAiBusy = false;
+    $("qzAiBtn").disabled = false;
+    $("qzAiBtn").textContent = checked ? "AI Explain" : "AI Hint";
+  }
+}
+$("qzAiBtn").addEventListener("click", qzAiHelp);
+
 /* ================= Account & cloud sync (Supabase) =================
    Progress syncs to a personal account so the same data is available on any
    device. localStorage stays the working copy; the cloud row is updated a
@@ -3511,12 +4081,16 @@ let lastPullMs = 0;
 function setSyncStatus(msg) {
   const line = msg || (!sb ? "Cloud sync not configured."
     : !cloudUser ? "Not signed in — progress is saved in this browser only."
+    : userRole === "teacher" ? "Teacher account — students' shared data loads here."
     : cloudDirty ? "Changes pending sync…"
     : lastSyncedAt ? "Synced " + lastSyncedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     : "Connected.");
   const side = $("syncStatus");
   side.textContent = cloudUser ? "☁ " + cloudUser.email + " · " + line : line;
   side.classList.toggle("ok", !!cloudUser && !cloudDirty && !msg);
+  const tSide = $("tSyncStatus");
+  tSide.textContent = side.textContent;
+  tSide.classList.toggle("ok", side.classList.contains("ok"));
   $("acctSyncLine").textContent = line;
 }
 
@@ -3530,7 +4104,9 @@ function updateAccountUI() {
   $("acctUnconfigured").classList.toggle("hidden", !!sb);
   $("acctSignedOut").classList.toggle("hidden", !sb || !!cloudUser);
   $("acctSignedIn").classList.toggle("hidden", !sb || !cloudUser);
-  if (cloudUser) $("acctWho").textContent = cloudUser.email;
+  if (cloudUser) $("acctWho").textContent = cloudUser.email + (userRole === "teacher" ? " — teacher account" : "");
+  // sharing your progress with a teacher only makes sense for signed-in students
+  $("tshareBox").classList.toggle("hidden", !cloudUser || userRole === "teacher");
   setSyncStatus();
 }
 
@@ -3596,7 +4172,7 @@ function mergeStates(older, newer) {
 }
 
 function scheduleCloudPush() {
-  if (!sb || !cloudUser) return;
+  if (!sb || !cloudUser || userRole === "teacher") return; // teachers never write progress rows
   if (!cloudDirty) { cloudDirty = true; cloudFirstDirtyAt = Date.now(); }
   setSyncStatus();
   clearTimeout(cloudPushTimer);
@@ -3606,7 +4182,7 @@ function scheduleCloudPush() {
 }
 
 async function pushCloudNow() {
-  if (!sb || !cloudUser || cloudBusy) return;
+  if (!sb || !cloudUser || cloudBusy || userRole === "teacher") return;
   clearTimeout(cloudPushTimer);
   cloudBusy = true;
   cloudDirty = false; // a save during the request re-flags it
@@ -3627,7 +4203,7 @@ async function pushCloudNow() {
 }
 
 async function pullCloud(announce) {
-  if (!sb || !cloudUser || cloudBusy) return;
+  if (!sb || !cloudUser || cloudBusy || userRole === "teacher") return;
   cloudBusy = true;
   setSyncStatus("Syncing…");
   try {
@@ -3664,6 +4240,392 @@ async function pullCloud(announce) {
   } finally { cloudBusy = false; }
 }
 
+/* ================= Teacher accounts, sharing & comments =================
+   Students can link a teacher account by email. Linked teachers get a
+   read-only dashboard of every shared student's attempts and mistake logs,
+   and can leave per-question comments that show up in the student's review
+   view. Tables + row-level security live in supabase-setup.sql. */
+
+const COMMENTS_CACHE_KEY = "sat_2048_comments_v1";
+let userRole = null;        // 'student' | 'teacher' — from the profiles table
+let signupRole = "student"; // account-type tab on the create-account form
+let myTeachers = [];        // student side: teachers linked to me
+let myComments = loadCommentsCache(); // student side: teacher comments on my questions
+let tStudents = [];         // teacher side: students who shared with me
+let tProgress = new Map();  // teacher side: student_id -> {state, updatedAt}
+let tComments = [];         // teacher side: comments I wrote
+let tView = { mode: "overview", studentId: null };
+let tError = "";
+
+function loadCommentsCache() {
+  try { return JSON.parse(localStorage.getItem(COMMENTS_CACHE_KEY)) || []; } catch (e) { return []; }
+}
+function saveCommentsCache() {
+  try { localStorage.setItem(COMMENTS_CACHE_KEY, JSON.stringify(myComments)); } catch (e) {}
+}
+function commentsFor(qid) { return myComments.filter(c => c.question_id === qid); }
+function tCommentsFor(sid, qid) { return tComments.filter(c => c.student_id === sid && c.question_id === qid); }
+function missingTablesMsg(e) {
+  return e && (e.code === "42P01" || /relation .* does not exist/i.test(e.message || ""))
+    ? "The teacher tables aren't set up yet — run the teacher section of supabase-setup.sql in the Supabase SQL Editor, then try again."
+    : (e && e.message) || "Something went wrong — try again.";
+}
+
+/* ---- role lookup: the profiles row is created on first sign-in ---- */
+async function ensureProfile() {
+  try {
+    const { data, error } = await sb.from("profiles").select("role").eq("user_id", cloudUser.id).maybeSingle();
+    if (error) throw error;
+    if (data) { userRole = data.role; return; }
+    const role = (cloudUser.user_metadata && cloudUser.user_metadata.role) === "teacher" ? "teacher" : "student";
+    const { error: insErr } = await sb.from("profiles")
+      .insert({ user_id: cloudUser.id, email: (cloudUser.email || "").toLowerCase(), role });
+    if (insErr && insErr.code !== "23505") throw insErr; // 23505 = row already there (another tab)
+    userRole = role;
+  } catch (e) {
+    console.warn("profile lookup failed", e);
+    userRole = "student"; // fail open to the normal student experience
+    acctMsg(missingTablesMsg(e), "bad");
+  }
+}
+
+async function onSignedIn() {
+  await ensureProfile();
+  updateAccountUI();
+  if (userRole === "teacher") {
+    enterTeacherMode();
+  } else {
+    exitTeacherMode();
+    pullCloud(true);
+    refreshShareData();
+  }
+}
+function onSignedOut() {
+  userRole = null;
+  myTeachers = [];
+  tStudents = [];
+  tProgress = new Map();
+  tComments = [];
+  exitTeacherMode();
+  updateAccountUI();
+}
+
+/* ---- account-type tabs on the create-account form ---- */
+document.querySelectorAll("#acctRoleTabs .subj-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    signupRole = tab.dataset.role;
+    document.querySelectorAll("#acctRoleTabs .subj-tab").forEach(t => t.classList.toggle("on", t === tab));
+    $("acctRoleNote").textContent = signupRole === "teacher"
+      ? "Teachers don't play — they get a read-only dashboard of every student who shares their progress, with each mistake log and a comment box per question."
+      : "Students practice and sync progress. Only matters when creating an account — signing in always uses the type you picked originally.";
+  });
+});
+
+/* ---- student side: share with a teacher ---- */
+async function refreshShareData() {
+  if (!sb || !cloudUser || userRole !== "student") return;
+  try {
+    const [links, cmts] = await Promise.all([
+      sb.from("teacher_links").select("id, teacher_email, created_at").eq("student_id", cloudUser.id).order("created_at"),
+      sb.from("comments").select("id, question_id, attempt_at, teacher_email, body, created_at").eq("student_id", cloudUser.id).order("created_at")
+    ]);
+    if (links.error) throw links.error;
+    myTeachers = links.data || [];
+    if (!cmts.error) { myComments = cmts.data || []; saveCommentsCache(); }
+    renderTeacherList();
+  } catch (e) {
+    console.warn("share data load failed", e); // tables may not exist yet — sharing UI just stays empty
+  }
+}
+
+function renderTeacherList() {
+  const box = $("tshareList");
+  box.innerHTML = myTeachers.map(t => `
+    <div class="tshare-row">
+      <span class="tshare-who">${esc(t.teacher_email)}</span>
+      <span class="tshare-since">since ${new Date(t.created_at).toLocaleDateString()}</span>
+      <button type="button" class="tshare-remove" data-link="${esc(t.id)}">Remove</button>
+    </div>`).join("");
+  box.querySelectorAll(".tshare-remove").forEach(btn => btn.addEventListener("click", async () => {
+    if (!confirm("Remove this teacher? They'll no longer see your progress or be able to comment.")) return;
+    const { error } = await sb.from("teacher_links").delete().eq("id", btn.dataset.link);
+    if (error) { acctMsg(missingTablesMsg(error), "bad"); return; }
+    acctMsg("Teacher removed.", "ok");
+    refreshShareData();
+  }));
+}
+
+async function addTeacher() {
+  if (!sb || !cloudUser) return;
+  const email = $("tshareEmail").value.trim().toLowerCase();
+  if (!email) { acctMsg("Type your teacher's account email first.", "bad"); return; }
+  if (myTeachers.some(t => (t.teacher_email || "").toLowerCase() === email)) { acctMsg("That teacher is already linked.", "bad"); return; }
+  acctMsg("Looking up teacher…");
+  try {
+    const { data: prof, error } = await sb.from("profiles")
+      .select("user_id, email").eq("role", "teacher").ilike("email", email).maybeSingle();
+    if (error) throw error;
+    if (!prof) { acctMsg("No teacher account found with that email. Ask them to create one here first (Account type: Teacher).", "bad"); return; }
+    const { error: insErr } = await sb.from("teacher_links").insert({
+      student_id: cloudUser.id, teacher_id: prof.user_id,
+      student_email: cloudUser.email, teacher_email: prof.email
+    });
+    if (insErr) throw insErr;
+    $("tshareEmail").value = "";
+    acctMsg("Teacher added — they can now see your progress and leave comments on your questions.", "ok");
+    refreshShareData();
+  } catch (e) { acctMsg(missingTablesMsg(e), "bad"); }
+}
+$("tshareAdd").addEventListener("click", addTeacher);
+$("tshareEmail").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addTeacher(); } });
+
+/* ---- teacher comments shown inside the review overlay ---- */
+function renderRvComments(x) {
+  const box = $("rvComments");
+  const isTeacher = !!teacherReviewCtx;
+  const list = isTeacher ? tCommentsFor(teacherReviewCtx.studentId, x.id) : commentsFor(x.id);
+  if (!isTeacher && !list.length) { box.classList.add("hidden"); box.innerHTML = ""; return; }
+  const when = c => new Date(c.created_at).toLocaleDateString() + " " +
+    new Date(c.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const items = list.map(c => `<div class="cmt">
+      <div class="cmt-meta"><b>${esc(isTeacher ? "You" : c.teacher_email)}</b><span>${when(c)}</span>${isTeacher ? `<button type="button" class="cmt-del" data-cid="${esc(c.id)}">Delete</button>` : ""}</div>
+      <div class="cmt-body">${esc(c.body)}</div>
+    </div>`).join("") || `<p class="cmt-empty">No comments on this question yet.</p>`;
+  const composer = isTeacher ? `<div class="cmt-compose">
+      <textarea id="cmtText" placeholder="Leave a comment for your student — what to reread, what to drill, what they did well…"></textarea>
+      <button class="pillbtn blue cmt-send" id="cmtSend">Post comment</button>
+    </div>` : "";
+  box.innerHTML = `<div class="rv-rhead">Teacher Comments</div><div class="rv-rbody">${items}${composer}</div>`;
+  box.classList.remove("hidden");
+  if (!isTeacher) return;
+  $("cmtSend").addEventListener("click", () => postComment(x));
+  box.querySelectorAll(".cmt-del").forEach(btn => btn.addEventListener("click", async () => {
+    if (!confirm("Delete this comment?")) return;
+    const { error } = await sb.from("comments").delete().eq("id", btn.dataset.cid);
+    if (error) { toast("Delete failed — " + (error.message || "try again")); return; }
+    tComments = tComments.filter(c => c.id !== btn.dataset.cid);
+    renderRvComments(x);
+  }));
+}
+
+async function postComment(x) {
+  const body = $("cmtText").value.trim();
+  if (!body) { toast("Write the comment first."); return; }
+  const btn = $("cmtSend");
+  btn.disabled = true; btn.textContent = "Posting…";
+  const { data, error } = await sb.from("comments").insert({
+    student_id: teacherReviewCtx.studentId,
+    teacher_id: cloudUser.id,
+    teacher_email: cloudUser.email,
+    question_id: x.id,
+    attempt_at: String(x.at || ""),
+    body
+  }).select().single();
+  if (error) {
+    btn.disabled = false; btn.textContent = "Post comment";
+    toast("Comment failed — " + missingTablesMsg(error));
+    return;
+  }
+  tComments.push(data);
+  toast("Comment posted — your student will see it on this question.");
+  renderRvComments(x);
+}
+
+/* ---- teacher dashboard ---- */
+function enterTeacherMode() {
+  $("mshell").classList.add("hidden");
+  $("teacherShell").classList.remove("hidden");
+  loadTeacherData(false);
+}
+function exitTeacherMode() {
+  $("teacherShell").classList.add("hidden");
+  $("mshell").classList.remove("hidden");
+}
+
+async function loadTeacherData(keepView) {
+  if (!sb || !cloudUser || userRole !== "teacher") return;
+  tError = "";
+  setSyncStatus("Loading student data…");
+  try {
+    const { data: links, error } = await sb.from("teacher_links")
+      .select("id, student_id, student_email, created_at").eq("teacher_id", cloudUser.id).order("student_email");
+    if (error) throw error;
+    tStudents = links || [];
+    tProgress = new Map();
+    if (tStudents.length) {
+      const ids = tStudents.map(l => l.student_id);
+      const { data: rows, error: pErr } = await sb.from("progress").select("user_id, state, updated_at").in("user_id", ids);
+      if (pErr) throw pErr;
+      for (const r of rows || []) tProgress.set(r.user_id, { state: normalizeState(r.state || {}), updatedAt: r.updated_at });
+    }
+    const { data: cmts, error: cErr } = await sb.from("comments")
+      .select("id, student_id, question_id, attempt_at, teacher_email, body, created_at")
+      .eq("teacher_id", cloudUser.id).order("created_at");
+    if (cErr) throw cErr;
+    tComments = cmts || [];
+  } catch (e) {
+    console.warn("teacher data load failed", e);
+    tError = missingTablesMsg(e);
+  }
+  setSyncStatus();
+  if (!keepView) tView = { mode: "overview", studentId: null };
+  renderTeacher();
+}
+
+function renderTeacher() {
+  if (tView.mode === "student" && tProgress.has(tView.studentId)) renderStudentDetail();
+  else { tView = { mode: "overview", studentId: null }; renderTeacherOverview(); }
+}
+
+function studentStats(s) {
+  const a = s.attempts || [];
+  const correct = a.filter(x => x.ok).length;
+  return {
+    answered: a.length, correct, acc: pct(correct, a.length),
+    wrongCount: a.filter(x => !x.ok).length,
+    queue: Object.keys(s.wrong || {}).length,
+    last: a.length ? a[a.length - 1].at : null
+  };
+}
+
+function renderTeacherOverview() {
+  $("tTitle").innerHTML = `How are <em>your students</em> doing?`;
+  $("tSub").textContent = "Every attempt, mistake log, and reflection — as they practice.";
+  const box = $("tContent");
+  if (tError) {
+    box.innerHTML = `<div class="tstu-empty"><span class="sticker">Setup needed</span><h2>Couldn't load student data.</h2><p>${esc(tError)}</p></div>`;
+    return;
+  }
+  if (!tStudents.length) {
+    box.innerHTML = `<div class="tstu-empty"><span class="sticker">No students yet</span><h2>Waiting for your first student.</h2><p>Ask each student to open <b>Account &amp; sync</b> in their game sidebar, scroll to <b>Share with a teacher</b>, and add your email (<code>${esc(cloudUser.email)}</code>). They'll show up here on your next refresh.</p></div>`;
+    return;
+  }
+  box.innerHTML = `<div class="tstu-grid">` + tStudents.map(l => {
+    const p = tProgress.get(l.student_id);
+    if (!p) return `<button type="button" class="tstu-card" data-sid="${esc(l.student_id)}">
+      <span class="tstu-who">${esc(l.student_email)}</span>
+      <div class="tstu-acc">—<small> no synced progress yet</small></div>
+      <div class="tstu-last">Linked ${new Date(l.created_at).toLocaleDateString()} — waiting for their first sign-in.</div>
+    </button>`;
+    const st = studentStats(p.state);
+    const cmtCount = tComments.filter(c => c.student_id === l.student_id).length;
+    return `<button type="button" class="tstu-card" data-sid="${esc(l.student_id)}">
+      <span class="tstu-who">${esc(l.student_email)}</span>
+      <div class="tstu-acc">${st.answered ? st.acc : "—"}<small>% accuracy</small></div>
+      <div class="acc-bar"><div style="width:${st.answered ? st.acc : 0}%"></div></div>
+      <div class="tstu-meta">
+        <span><b>${st.answered}</b>Answered</span>
+        <span><b>${st.wrongCount}</b>Mistakes</span>
+        <span><b>${st.queue}</b>To review</span>
+      </div>
+      <div class="tstu-last">${st.last ? "Last practiced " + new Date(st.last).toLocaleDateString() : "Hasn't practiced yet"}${cmtCount ? ` · 💬 ${cmtCount}` : ""}</div>
+    </button>`;
+  }).join("") + `</div>
+  <p class="tnote" style="margin-top:22px">Click a student to read their mistake logs and leave comments. Use <b>Refresh data</b> in the sidebar to pull their latest work.</p>`;
+  box.querySelectorAll(".tstu-card").forEach(card => card.addEventListener("click", () => openStudentDetail(card.dataset.sid)));
+}
+
+function openStudentDetail(sid) {
+  if (!tProgress.has(sid)) { toast("That student hasn't synced any progress yet."); return; }
+  tView = { mode: "student", studentId: sid };
+  renderStudentDetail();
+}
+
+function renderStudentDetail() {
+  const sid = tView.studentId;
+  const link = tStudents.find(l => l.student_id === sid) || {};
+  const p = tProgress.get(sid);
+  const s = p.state, a = s.attempts || [];
+  const correct = a.filter(x => x.ok).length;
+  const timed = a.filter(x => x.timeSec > 0);
+  const avgTime = timed.length ? Math.round(timed.reduce((t, x) => t + x.timeSec, 0) / timed.length) : 0;
+  let bestStreak = 0, cur = 0;
+  for (const x of a) { cur = x.ok ? cur + 1 : 0; bestStreak = Math.max(bestStreak, cur); }
+  const reflections = a.filter(x => x.reflection).length;
+
+  $("tTitle").innerHTML = `Inside <em>one student's</em> practice.`;
+  $("tSub").textContent = link.student_email || "";
+
+  const bySkill = new Map();
+  for (const x of a) {
+    const k = x.skill || (qById.get(x.id) || {}).skill || "—";
+    if (!bySkill.has(k)) bySkill.set(k, { asked: 0, ok: 0 });
+    const r = bySkill.get(k); r.asked++; if (x.ok) r.ok++;
+  }
+  const skillRows = [...bySkill.entries()].sort((x, y) => y[1].asked - x[1].asked).map(([k, r]) => {
+    const pc = pct(r.ok, r.asked);
+    return `<tr><td>${esc(k)}</td><td>${r.asked}</td><td>${r.ok}</td><td style="display:flex;align-items:center;gap:8px">${pctBar(pc)} ${pc}%</td></tr>`;
+  }).join("");
+
+  const mistCards = a.map((x, i) => ({ x, i })).filter(m => !m.x.ok).reverse().map(({ x, i }) => {
+    const q = qById.get(x.id) || {};
+    const r = x.reflection || {};
+    const why = r.whyWrong || r.text || "";
+    const d = new Date(x.at);
+    const cmts = tCommentsFor(sid, x.id);
+    const tried = (x.wrongTries && x.wrongTries.length) ? x.wrongTries.join(", ") : (x.ans || "—");
+    return `<div class="tmist">
+      <div class="tmist-top">
+        <span class="tmist-skill">${esc(x.skill || q.skill || "Question")}</span>
+        <span class="tmist-when">${d.toLocaleDateString()} · ${d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}${x.mode === "external" ? " · external" : x.mode === "rush" ? " · rush" : x.mode === "review" ? " · review" : ""}</span>
+        <span class="result-chip bad">${esc(tried)} ✗ (${esc(x.correctLetter || "?")})</span>
+      </div>
+      ${why ? `<p class="tmist-why"><span class="lbl">Why they got it wrong — their words</span>${esc(why)}</p>` : `<p class="tmist-why"><span class="lbl">No written reflection on this one</span></p>`}
+      ${(r.traps && r.traps.length) ? `<div class="tmist-tags">${r.traps.map(t => `<span class="rv-tag">${esc(t)}</span>`).join("")}</div>` : ""}
+      <div class="tmist-foot">
+        ${r.confidence ? confChip(r.confidence) : ""}
+        <span class="tmist-cmts">${cmts.length ? `💬 ${cmts.length} comment${cmts.length === 1 ? "" : "s"}` : ""}</span>
+        <button type="button" class="btn" data-att="${i}">Open question &amp; comment</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  $("tContent").innerHTML = `
+    <div class="tdet-head">
+      <button type="button" class="btn" id="tBackBtn">‹ All students</button>
+      <span class="tdet-who">${esc(link.student_email || "Student")}</span>
+      <span class="tdet-sync">Synced ${p.updatedAt ? new Date(p.updatedAt).toLocaleString() : "—"}</span>
+    </div>
+    <div class="tsec">
+      <h3>At a glance</h3>
+      <div class="stat-cards">
+        <div class="stat-card"><div class="k">Answered</div><div class="v">${a.length}</div></div>
+        <div class="stat-card"><div class="k">Correct</div><div class="v">${correct}</div></div>
+        <div class="stat-card"><div class="k">Accuracy</div><div class="v">${pct(correct, a.length)}<small>%</small></div></div>
+        <div class="stat-card"><div class="k">Avg time</div><div class="v">${avgTime}<small>s</small></div></div>
+        <div class="stat-card"><div class="k">Best streak</div><div class="v">${bestStreak}</div></div>
+        <div class="stat-card"><div class="k">Mistake logs</div><div class="v">${reflections}</div></div>
+        <div class="stat-card"><div class="k">Review queue</div><div class="v">${Object.keys(s.wrong || {}).length}</div></div>
+      </div>
+    </div>
+    ${skillRows ? `<div class="tsec"><h3>Accuracy by skill</h3>
+      <table class="stats-table"><thead><tr><th>Skill</th><th>Asked</th><th>Correct</th><th>Accuracy</th></tr></thead><tbody>${skillRows}</tbody></table></div>` : ""}
+    <div class="tsec">
+      <h3>Mistake log — newest first</h3>
+      ${mistCards || `<p class="tnote">No mistakes yet — either brand new, or on a serious hot streak. 🎉</p>`}
+    </div>`;
+
+  $("tBackBtn").addEventListener("click", () => { tView = { mode: "overview", studentId: null }; renderTeacherOverview(); });
+  $("tContent").querySelectorAll("[data-att]").forEach(btn =>
+    btn.addEventListener("click", () => openTeacherReview(sid, +btn.dataset.att)));
+}
+
+function openTeacherReview(sid, attemptIndex) {
+  const p = tProgress.get(sid);
+  if (!p) return;
+  teacherReviewCtx = { attempts: p.state.attempts || [], highlights: p.state.highlights || {}, studentId: sid };
+  reviewFrom = "teacher";
+  openReview(attemptIndex);
+}
+
+$("tOverviewBtn").addEventListener("click", () => { tView = { mode: "overview", studentId: null }; renderTeacherOverview(); });
+$("tRefreshBtn").addEventListener("click", () => loadTeacherData(true));
+$("tAccountBtn").addEventListener("click", () => {
+  acctMsg("");
+  updateAccountUI();
+  $("accountOverlay").classList.remove("hidden");
+});
+
 $("accountBtn").addEventListener("click", () => {
   acctMsg("");
   updateAccountUI();
@@ -3681,13 +4643,15 @@ if (sb) {
         .then(({ error }) => toast(error ? "Password update failed: " + error.message : "Password updated."));
       return;
     }
-    if (cloudUser && cloudUser.id !== prevId) pullCloud(true);
+    if (cloudUser && cloudUser.id !== prevId) onSignedIn();
+    else if (!cloudUser && prevId) onSignedOut();
   });
 
   // Refresh when coming back to the tab; flush pending changes when leaving.
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
-      if (cloudUser && Date.now() - lastPullMs > 60000) pullCloud(false);
+      if (cloudUser && userRole === "teacher") { loadTeacherData(true); return; }
+      if (cloudUser && Date.now() - lastPullMs > 60000) { pullCloud(false); refreshShareData(); }
     } else if (cloudDirty) {
       pushCloudNow();
     }
@@ -3708,10 +4672,11 @@ if (sb) {
     if (!email || password.length < 6) { acctMsg("Enter an email and a password of at least 6 characters.", "bad"); return; }
     acctMsg("Creating account…");
     const redirect = location.protocol.startsWith("http") ? location.href.split("#")[0] : undefined;
-    const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: redirect } });
+    const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: redirect, data: { role: signupRole } } });
     if (error) { acctMsg(error.message, "bad"); return; }
-    if (data.session) acctMsg("Account created — you're signed in.", "ok");
-    else acctMsg("Account created! Check your email and click the confirmation link, then come back and sign in.", "ok");
+    const roleNote = signupRole === "teacher" ? " Teacher account: students add you by this email." : "";
+    if (data.session) acctMsg("Account created — you're signed in." + roleNote, "ok");
+    else acctMsg("Account created! Check your email and click the confirmation link, then come back and sign in." + roleNote, "ok");
   });
 
   $("acctForgot").addEventListener("click", async () => {
@@ -3732,8 +4697,14 @@ if (sb) {
 
   $("acctSyncNow").addEventListener("click", async () => {
     acctMsg("");
+    if (userRole === "teacher") {
+      await loadTeacherData(true);
+      acctMsg("Student data refreshed.", "ok");
+      return;
+    }
     await pullCloud(true);
     if (cloudDirty) await pushCloudNow();
+    refreshShareData();
     acctMsg("Everything is up to date.", "ok");
   });
 }
@@ -4007,7 +4978,10 @@ $("qbankGrid").addEventListener("click", e => {
 // Jump straight to any catalog question, abandoning the current one (not recorded).
 function jumpToQuestion(id) {
   // ...but a question that's already been missed can't be abandoned — finish it
-  // (and its mistake log) first, otherwise the bank is a free skip button.
+  // (and its mistake log) first, otherwise the bank is a free skip button. A stale
+  // pendingMistake (already completed elsewhere) doesn't count — clear it instead
+  // of blocking the jump.
+  if (state.pendingMistake) clearStalePendingMistake();
   if (state.pendingMistake || state.pendingQuestion) {
     closeQbank();
     toast(state.pendingMistake ? "Finish your mistake log first" : "Finish the current question first");
@@ -4046,14 +5020,17 @@ $("qbankGroup").addEventListener("click", () => {
 
 /* ================= Review overlay (read-only) ================= */
 let reviewIndex = -1;
-let reviewFrom = "bank";   // "bank" | "stats" — where closeReview() should return to
+let reviewFrom = "bank";   // "bank" | "stats" | "teacher" — where closeReview() should return to
+let teacherReviewCtx = null; // {attempts, highlights, studentId} while a teacher reads a student's attempt
+function reviewAttempts() { return teacherReviewCtx ? teacherReviewCtx.attempts : state.attempts; }
+function reviewHighlights() { return teacherReviewCtx ? (teacherReviewCtx.highlights || {}) : state.highlights; }
 
 function confChip(c) {
   const bg = c === "Got it" ? "var(--green)" : c === "Still shaky" ? "var(--amber)" : "var(--red)";
   return `<span class="rv-conf" style="background:${bg}">${esc(c)}</span>`;
 }
 function openReview(i) {
-  const a = state.attempts;
+  const a = reviewAttempts();
   if (i < 0 || i >= a.length) return;
   reviewIndex = i;
   const x = a[i];
@@ -4071,7 +5048,7 @@ function openReview(i) {
   if (q && q.image) imgBox.innerHTML = `<img src="${q.image}" alt="Question figure" />`;
 
   // passage + stem
-  const hl = state.highlights[x.id] || {};
+  const hl = reviewHighlights()[x.id] || {};
   if (q) {
     $("rvPassage").innerHTML = hl.passage || formatPassage(q.passage, q);
     $("rvStem").innerHTML = hl.stem || `<p>${esc(q.stem).replace(/_{3,}/g, '<span class="blank">______</span>')}</p>`;
@@ -4141,7 +5118,11 @@ function openReview(i) {
     rbox.innerHTML = "";
   }
 
-  $("rvClose").textContent = reviewFrom === "stats" ? "Back to statistics" : "Back to bank";
+  // teacher comments on this question (composer included in teacher mode)
+  renderRvComments(x);
+
+  $("rvClose").textContent = reviewFrom === "stats" ? "Back to statistics"
+    : reviewFrom === "teacher" ? "Back to dashboard" : "Back to bank";
   $("rvPrev").disabled = i <= 0;
   $("rvNext").disabled = i >= a.length - 1;
   closeQbank();
@@ -4153,7 +5134,8 @@ function openReview(i) {
 function closeReview() {
   $("reviewOverlay").classList.add("hidden");
   $("reviewOverlay").setAttribute("aria-hidden", "true");
-  // go back where we came from: the question bank, or the statistics list
+  // go back where we came from: teacher dashboard, question bank, or statistics
+  if (reviewFrom === "teacher") { teacherReviewCtx = null; renderTeacher(); return; }
   if (reviewFrom === "stats") openStats(); else openQbank();
 }
 $("rvClose").addEventListener("click", closeReview);
@@ -4326,7 +5308,16 @@ window.__sat = {
   imageIds: () => QUESTIONS.filter(q => q.image).map(q => q.id),
   state: () => state,
   finishReflectTimer: () => { mkStartMs = Date.now() - MIN_REFLECT_SEC * 1000 - 1000; },
-  setInterval_: n => { state.settings.interval = n; save(); updateGameUI(); }
+  setInterval_: n => { state.settings.interval = n; save(); updateGameUI(); },
+  // preview the teacher dashboard with fake data, no sign-in needed
+  teacherMock: (students, progress, comments) => {
+    userRole = "teacher";
+    tStudents = students; tProgress = new Map(progress); tComments = comments || []; tError = "";
+    tView = { mode: "overview", studentId: null };
+    $("mshell").classList.add("hidden");
+    $("teacherShell").classList.remove("hidden");
+    renderTeacher();
+  }
 };
 
 /* Closing or reloading mid-log is a warning, not an exit — the log is saved and
@@ -4341,6 +5332,7 @@ window.addEventListener("beforeunload", e => {
 
 /* ================= Boot ================= */
 newGame(true);
+applyPlayMode();
 updatePoolPill();
 resumeUnfinished();
 })();
