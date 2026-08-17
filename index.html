@@ -1405,6 +1405,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.5 2.5 0 115 .4c0 1.6-2 1.9-2 3.4"/><circle cx="12.5" cy="16.8" r="0.6" fill="currentColor"/></svg>
       Help
     </button>
+    <button class="qz-menu-item" id="menuSettings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h.09a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h.09a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.09a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Practice Settings
+    </button>
     <button class="qz-menu-item" id="menuExit">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5L2.5 20.5h19L12 3.5z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.4" r="0.6" fill="currentColor"/></svg>
       Exit the Exam
@@ -2779,6 +2783,8 @@ function openMistakeLog(resume) {
     : "Minimum reflection time remaining. Use it to reread the passage and rationale.";
   $("mkSubmit").disabled = true;
   $("mkSkip").classList.toggle("hidden", !state.settings.allowSkipLog);
+  delete $("mkSkip").dataset.arm;
+  $("mkSkip").textContent = "Skip this log and move on";
   clearInterval(mkInt);
   mkInt = setInterval(() => {
     mkRemaining = Math.max(0, mkOwedSec - Math.floor((Date.now() - mkStartMs) / 1000));
@@ -2974,10 +2980,22 @@ $("mkSubmit").addEventListener("click", () => {
 
 /* Skipping records the attempt without a reflection. The miss still counts and the
    question still sits in the review queue — only the writing is waived. Off by
-   default; Practice Settings turns it on. */
+   default; Practice Settings turns it on. Confirmation is inline (click twice)
+   rather than a native confirm() dialog — those are blocked in embedded/sandboxed
+   contexts, which would leave the link silently dead. */
+const MK_SKIP_LABEL = "Skip this log and move on";
 $("mkSkip").addEventListener("click", () => {
   if (!pendingAttempt || !state.settings.allowSkipLog) return;
-  if (!confirm("Skip the mistake log for this question?\n\nThe attempt is still recorded and the question stays in your review queue — you just won't write the log.")) return;
+  if (!$("mkSkip").dataset.arm) {
+    $("mkSkip").dataset.arm = "1";
+    $("mkSkip").textContent = "The attempt is recorded and the question stays in your review queue — click again to skip";
+    clearTimeout($("mkSkip")._t);
+    $("mkSkip")._t = setTimeout(() => { delete $("mkSkip").dataset.arm; $("mkSkip").textContent = MK_SKIP_LABEL; }, 6000);
+    return;
+  }
+  clearTimeout($("mkSkip")._t);
+  delete $("mkSkip").dataset.arm;
+  $("mkSkip").textContent = MK_SKIP_LABEL;
   pendingAttempt.reflection = null;
   pendingAttempt.logSkipped = true;
   state.attempts.push(pendingAttempt);
@@ -3036,6 +3054,10 @@ $("moreBtn").addEventListener("click", e => {
   $("qzMenu").classList.toggle("hidden");
 });
 $("menuHelp").addEventListener("click", () => { $("qzMenu").classList.add("hidden"); setDirections(true); });
+// Reachable from inside the quiz on purpose: someone stuck on a mistake log has
+// no other way to turn on "Allow skipping" — the settings sidebar is behind the
+// quiz modal, and the log blocks closing it. (Settings overlay stacks above the quiz.)
+$("menuSettings").addEventListener("click", () => { $("qzMenu").classList.add("hidden"); openSettings(); });
 $("menuExit").addEventListener("click", () => { $("qzMenu").classList.add("hidden"); closeQuiz(); });
 document.addEventListener("click", e => {
   if (!$("qzMenu").classList.contains("hidden") && !$("qzMenu").contains(e.target) && e.target !== $("moreBtn")) {
