@@ -2078,19 +2078,51 @@ function defaultState() {
   };
 }
 let state = loadState();
+// The `savedAt` of the copy currently in storage, as far as this tab knows. A
+// higher value there means someone else wrote after us — see save().
+let lastSeenSavedAt = 0;
+let saveFailed = false;
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultState();
     const d = defaultState();
     const s = JSON.parse(raw);
+    lastSeenSavedAt = s.savedAt || 0;
     return { ...d, ...s, settings: { ...d.settings, ...(s.settings || {}), skills: { ...d.settings.skills, ...((s.settings || {}).skills || {}) } } };
   } catch (e) { console.warn("load failed", e); return defaultState(); }
 }
-function save() {
-  state.savedAt = Date.now();
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-  catch (e) { console.warn("save failed", e); }
+function storedState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+// Two windows of the app share one localStorage, and each holds its own copy of
+// `state` in memory. Writing blindly means the last tab to save wins and silently
+// undoes everything the other one did — including re-arming work it had already
+// finished, like a completed mistake log. So reconcile with whatever is actually
+// in storage before overwriting it. `replace: true` is for the paths that are
+// *meant* to discard what's there (backup restore, reset).
+function save(opts) {
+  if (!(opts && opts.replace)) {
+    const stored = storedState();
+    if (stored && (stored.savedAt || 0) > lastSeenSavedAt) state = mergeStates(stored, state);
+  }
+  state.savedAt = Math.max(Date.now(), lastSeenSavedAt + 1); // strictly increasing
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    lastSeenSavedAt = state.savedAt;
+    saveFailed = false;
+  } catch (e) {
+    console.warn("save failed", e);
+    // Failing silently here is indistinguishable from "my progress isn't saving",
+    // so say it once rather than letting the session quietly stop persisting.
+    if (!saveFailed) {
+      saveFailed = true;
+      toast("Couldn't save to this browser's storage — save a backup file from Statistics.");
+    }
+  }
   scheduleCloudPush(); // no-op unless signed in (defined in the cloud sync section)
 }
 const $ = id => document.getElementById(id);
@@ -2749,6 +2781,21 @@ function openMistakeLog(resume) {
 function mkSpentSec() { return mkPriorSec + Math.floor((Date.now() - mkStartMs) / 1000); }
 function savePendingMistake(force) {
   if (!pendingAttempt) return;
+  // This log may have been finished in another window while it sat open here (the
+  // attempt is already recorded). Writing our copy back would re-ask for a log
+  // that's done — the thing pendingMistakeIsStale() exists to prevent — so stand
+  // down and let the finished version stand.
+  if (state.attempts.some(x => x.id === pendingAttempt.id && x.at === pendingAttempt.at)) {
+    pendingAttempt = null;
+    state.pendingMistake = null;
+    clearInterval(mkInt);
+    save();
+    if (quizOpen) {
+      toast("That mistake log was already completed in another window.");
+      closeQuiz();
+    }
+    return;
+  }
   const draft = {
     mkText: $("mkText").value,
     mkConcept: $("mkConcept").value,
@@ -3296,8 +3343,8 @@ $("statsBtn").addEventListener("click", openStats);
 $("resetBtn").addEventListener("click", () => {
   const cloudNote = cloudUser ? " Your cloud copy will be reset too." : "";
   if (!confirm("Reset ALL progress — attempts, mistake logs, highlights, stats, and the current game? This cannot be undone." + cloudNote)) return;
-  localStorage.removeItem(STORAGE_KEY);
   state = defaultState();
+  save({ replace: true }); // write the empty state so other open tabs pick it up too
   $("statsOverlay").classList.add("hidden");
   newGame(false);
   updatePoolPill();
@@ -3754,7 +3801,7 @@ function restoreBackup(file) {
     if (!confirm(`Restore this backup? It has ${count} attempts and will replace everything currently in this browser.`)) return;
     const d = defaultState();
     state = { ...d, ...incoming, settings: { ...d.settings, ...(incoming.settings || {}), skills: { ...d.settings.skills, ...((incoming.settings || {}).skills || {}) } } };
-    save();
+    save({ replace: true }); // a restore replaces what's in the browser, by definition
     newGame(true);
     updatePoolPill();
     $("statsOverlay").classList.add("hidden");
@@ -5319,6 +5366,24 @@ window.__sat = {
     renderTeacher();
   }
 };
+
+/* Another window of the app just saved. Fold its work into this tab now, so the
+   two stay one shared record instead of taking turns overwriting each other.
+   This tab's own settings and live board are kept — the merge is for the
+   cumulative record (attempts, seen, review queue, marks, highlights, rush). */
+window.addEventListener("storage", e => {
+  if (e.key !== STORAGE_KEY || !e.newValue) return;
+  let incoming;
+  try { incoming = JSON.parse(e.newValue); } catch (err) { return; }
+  if ((incoming.savedAt || 0) <= lastSeenSavedAt) return; // our own write, or older
+  const mySettings = state.settings, myGame = state.game;
+  state = mergeStates(state, incoming);
+  state.settings = mySettings;
+  state.game = myGame;
+  lastSeenSavedAt = incoming.savedAt || 0;
+  updatePoolPill();
+  if (!$("qbank").classList.contains("hidden")) renderQbank();
+});
 
 /* Closing or reloading mid-log is a warning, not an exit — the log is saved and
    comes straight back on the next load. */
