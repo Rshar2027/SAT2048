@@ -608,6 +608,12 @@
   .mistake .mk-count { font-size: 0.88rem; color: var(--bb-gray); margin: 6px 0 0; font-weight: 400; letter-spacing: 0; }
   .mistake .mk-count.ok { color: var(--green); font-weight: 700; }
   .mk-submit { margin-top: 16px; width: 100%; padding: 14px; font-size: 0.95rem; }
+  /* Deliberately quiet next to the submit button — skipping is the lesser path. */
+  .mk-skip {
+    display: block; margin: 10px auto 0; background: none; border: none; padding: 4px;
+    font: inherit; font-size: 0.85rem; color: var(--bb-gray); text-decoration: underline;
+  }
+  .mk-skip.hidden { display: none; }
 
   /* vocab rows inside the quiz log — same hairline/radius language as the choices */
   .mistake .vocab-add { gap: 10px; }
@@ -1482,6 +1488,7 @@
 
             <div class="mk-count" id="mkCount">0 / 250 characters</div>
             <button class="pillbtn blue mk-submit" id="mkSubmit" disabled>Save mistake log &amp; continue</button>
+            <button class="mk-skip hidden" id="mkSkip">Skip this log and move on</button>
           </div>
         </div>
       </div>
@@ -1589,6 +1596,14 @@
         <div class="subj-tabs" id="playModeTabs">
           <button type="button" class="subj-tab on" data-mode="game">2048 game</button>
           <button type="button" class="subj-tab" data-mode="practice">Questions only</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <h3>Mistake logs</h3>
+        <p class="desc">Missing a question opens a mistake log that has to be finished before you move on. Allowing skips adds a quiet "skip this log" link to it — the attempt is still recorded and the question still goes into your review queue.</p>
+        <div class="subj-tabs" id="skipLogTabs">
+          <button type="button" class="subj-tab on" data-skip="0">Always required</button>
+          <button type="button" class="subj-tab" data-skip="1">Allow skipping</button>
         </div>
       </div>
       <div class="set-row" id="intervalRow">
@@ -2061,7 +2076,7 @@ function defaultState() {
   const skills = {};
   for (const [, sm] of DOMAIN_SKILLS) for (const [sk] of sm) skills[sk] = true;
   return {
-    settings: { interval: 12, skills, practiceOnly: false },
+    settings: { interval: 12, skills, practiceOnly: false, allowSkipLog: false },
     seen: {},
     wrong: {},          // id -> {count, lastWrongAt, lastReviewedAt}
     attempts: [],       // {id, at, mode, ans, correctLetter, ok, timeSec, marked, reflection}
@@ -2077,11 +2092,12 @@ function defaultState() {
     game: null
   };
 }
-let state = loadState();
 // The `savedAt` of the copy currently in storage, as far as this tab knows. A
-// higher value there means someone else wrote after us — see save().
+// higher value there means someone else wrote after us — see save(). Declared
+// before the loadState() call below, which assigns it.
 let lastSeenSavedAt = 0;
 let saveFailed = false;
+let state = loadState();
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -2103,7 +2119,8 @@ function storedState() {
 // undoes everything the other one did — including re-arming work it had already
 // finished, like a completed mistake log. So reconcile with whatever is actually
 // in storage before overwriting it. `replace: true` is for the paths that are
-// *meant* to discard what's there (backup restore, reset).
+// *meant* to discard what's there (backup restore, reset); `localOnly: true` is
+// for writes made from inside a cloud push, which must not queue another one.
 function save(opts) {
   if (!(opts && opts.replace)) {
     const stored = storedState();
@@ -2123,7 +2140,7 @@ function save(opts) {
       toast("Couldn't save to this browser's storage — save a backup file from Statistics.");
     }
   }
-  scheduleCloudPush(); // no-op unless signed in (defined in the cloud sync section)
+  if (!(opts && opts.localOnly)) scheduleCloudPush(); // no-op unless signed in (cloud sync section)
 }
 const $ = id => document.getElementById(id);
 function toast(msg) {
@@ -2761,6 +2778,7 @@ function openMistakeLog(resume) {
     ? "Minimum time met ✓ — finish every section and save."
     : "Minimum reflection time remaining. Use it to reread the passage and rationale.";
   $("mkSubmit").disabled = true;
+  $("mkSkip").classList.toggle("hidden", !state.settings.allowSkipLog);
   clearInterval(mkInt);
   mkInt = setInterval(() => {
     mkRemaining = Math.max(0, mkOwedSec - Math.floor((Date.now() - mkStartMs) / 1000));
@@ -2951,6 +2969,23 @@ $("mkSubmit").addEventListener("click", () => {
   clearInterval(mkInt);
   save();
   toast("Mistake log saved");
+  closeQuiz();
+});
+
+/* Skipping records the attempt without a reflection. The miss still counts and the
+   question still sits in the review queue — only the writing is waived. Off by
+   default; Practice Settings turns it on. */
+$("mkSkip").addEventListener("click", () => {
+  if (!pendingAttempt || !state.settings.allowSkipLog) return;
+  if (!confirm("Skip the mistake log for this question?\n\nThe attempt is still recorded and the question stays in your review queue — you just won't write the log.")) return;
+  pendingAttempt.reflection = null;
+  pendingAttempt.logSkipped = true;
+  state.attempts.push(pendingAttempt);
+  pendingAttempt = null;
+  state.pendingMistake = null;
+  clearInterval(mkInt);
+  save();
+  toast("Log skipped — attempt recorded.");
   closeQuiz();
 });
 
@@ -3187,6 +3222,8 @@ function openSettings() {
   document.querySelectorAll("#playModeTabs .subj-tab").forEach(t =>
     t.classList.toggle("on", t.dataset.mode === (state.settings.practiceOnly ? "practice" : "game")));
   $("intervalRow").classList.toggle("hidden", state.settings.practiceOnly);
+  document.querySelectorAll("#skipLogTabs .subj-tab").forEach(t =>
+    t.classList.toggle("on", (t.dataset.skip === "1") === !!state.settings.allowSkipLog));
   const box = $("domainGroups");
   box.innerHTML = "";
   for (const [domain, skillsMap] of DOMAIN_SKILLS) {
@@ -3244,15 +3281,24 @@ document.querySelectorAll("#playModeTabs .subj-tab").forEach(t => {
     $("intervalRow").classList.toggle("hidden", t.dataset.mode === "practice");
   });
 });
+document.querySelectorAll("#skipLogTabs .subj-tab").forEach(t => {
+  t.addEventListener("click", () =>
+    document.querySelectorAll("#skipLogTabs .subj-tab").forEach(o => o.classList.toggle("on", o === t)));
+});
 $("settingsSave").addEventListener("click", () => {
   const checkedSkills = new Set([...document.querySelectorAll(".skill-cb:checked")].map(cb => cb.dataset.skill));
   if (!checkedSkills.size) { toast("Select at least one skill."); return; }
   for (const k of Object.keys(state.settings.skills)) state.settings.skills[k] = checkedSkills.has(k);
   state.settings.interval = parseInt($("intervalRange").value, 10);
   state.settings.practiceOnly = document.querySelector("#playModeTabs .subj-tab.on").dataset.mode === "practice";
+  state.settings.allowSkipLog = document.querySelector("#skipLogTabs .subj-tab.on").dataset.skip === "1";
   save();
   $("settingsOverlay").classList.add("hidden");
   applyPlayMode(); updateGameUI(); updatePoolPill();
+  // a log already on screen picks the new setting up straight away
+  if (quizOpen && !$("mistakeBox").classList.contains("hidden")) {
+    $("mkSkip").classList.toggle("hidden", !state.settings.allowSkipLog);
+  }
   toast("Settings saved");
 });
 $("settingsBtn").addEventListener("click", openSettings);
@@ -4124,6 +4170,7 @@ let cloudPushTimer = null;
 let cloudFirstDirtyAt = 0;
 let lastSyncedAt = null;
 let lastPullMs = 0;
+let cloudRowUpdatedAt = null; // the row's `updated_at` as we last saw it — see pushCloudNow()
 
 function setSyncStatus(msg) {
   const line = msg || (!sb ? "Cloud sync not configured."
@@ -4235,9 +4282,23 @@ async function pushCloudNow() {
   cloudDirty = false; // a save during the request re-flags it
   setSyncStatus("Syncing…");
   try {
+    // Another device may have written the row since our last pull — pulls only
+    // happen on sign-in and on returning to the tab, so the gap can be hours.
+    // Upserting straight over the top would erase that device's work, the same
+    // way one tab used to erase another's, so fold the row in first when it has
+    // moved on without us.
+    const { data: cur, error: curErr } = await sb.from("progress")
+      .select("state, updated_at").eq("user_id", cloudUser.id).maybeSingle();
+    if (curErr) throw curErr;
+    if (cur && cur.state && cur.updated_at !== cloudRowUpdatedAt) {
+      state = mergeStates(cur.state, state);
+      save({ localOnly: true }); // keep the browser copy in step, don't re-queue a push
+    }
+    const stamp = new Date().toISOString();
     const { error } = await sb.from("progress")
-      .upsert({ user_id: cloudUser.id, state, updated_at: new Date().toISOString() });
+      .upsert({ user_id: cloudUser.id, state, updated_at: stamp });
     if (error) throw error;
+    cloudRowUpdatedAt = stamp;
     lastSyncedAt = new Date();
     setSyncStatus();
   } catch (e) {
@@ -4264,6 +4325,7 @@ async function pullCloud(announce) {
       await pushCloudNow();
       return;
     }
+    cloudRowUpdatedAt = data.updated_at;
     const remote = data.state;
     const localTs = state.savedAt || 0;
     const remoteTs = remote.savedAt || Date.parse(data.updated_at) || 0;
@@ -5159,6 +5221,9 @@ function openReview(i) {
     if (r.underlined && r.underlined.length) body += block("Underlined", r.underlined.join(" | "));
     if (r.confidence) body += `<div class="rv-block"><div class="rv-lbl">Confidence</div>${confChip(r.confidence)}</div>`;
     rbox.innerHTML = `<div class="rv-rhead">Mistake Log</div><div class="rv-rbody">${body}</div>`;
+    rbox.classList.remove("hidden");
+  } else if (x.logSkipped) {
+    rbox.innerHTML = `<div class="rv-rhead">Mistake Log</div><div class="rv-rbody"><div class="rv-block"><div class="rv-val">Skipped — no log was written for this one.</div></div></div>`;
     rbox.classList.remove("hidden");
   } else {
     rbox.classList.add("hidden");
