@@ -2080,7 +2080,7 @@ function defaultState() {
   const skills = {};
   for (const [, sm] of DOMAIN_SKILLS) for (const [sk] of sm) skills[sk] = true;
   return {
-    settings: { interval: 12, skills, practiceOnly: false, allowSkipLog: false },
+    settings: { interval: 12, skills, practiceOnly: false, allowSkipLog: false, changedAt: 0 },
     seen: {},
     wrong: {},          // id -> {count, lastWrongAt, lastReviewedAt}
     attempts: [],       // {id, at, mode, ans, correctLetter, ok, timeSec, marked, reflection}
@@ -2340,8 +2340,10 @@ function move(dir) {
 }
 
 document.addEventListener("keydown", e => {
+  const t = e.target;
+  if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
   if (quizOpen || rushOpen) return;
-  if (["settingsOverlay", "statsOverlay", "rushSetupOverlay", "rushResultsOverlay"].some(id => !$(id).classList.contains("hidden"))) return;
+  if (["settingsOverlay", "statsOverlay", "rushSetupOverlay", "rushResultsOverlay", "accountOverlay", "aiOverlay", "externalOverlay"].some(id => !$(id).classList.contains("hidden"))) return;
   const map = {
     ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right",
     w: "up", s: "down", a: "left", d: "right",
@@ -3314,6 +3316,7 @@ $("settingsSave").addEventListener("click", () => {
   state.settings.interval = parseInt($("intervalRange").value, 10);
   state.settings.practiceOnly = document.querySelector("#playModeTabs .subj-tab.on").dataset.mode === "practice";
   state.settings.allowSkipLog = document.querySelector("#skipLogTabs .subj-tab.on").dataset.skip === "1";
+  state.settings.changedAt = Date.now();
   save();
   $("settingsOverlay").classList.add("hidden");
   applyPlayMode(); updateGameUI(); updatePoolPill();
@@ -4273,8 +4276,15 @@ function mergeStates(older, newer) {
     pendingQuestion = null; // finished on the other device
   }
 
+  // Settings carry their own timestamp (stamped on "Save settings"). A copy
+  // that saved more recently overall — game moves, attempts, cloud pushes —
+  // can still hold an *older* settings change, so "newer state wins" would
+  // quietly undo the user's last save. Compare the settings stamps instead.
+  const settings = (a.settings.changedAt || 0) > (b.settings.changedAt || 0) ? a.settings : b.settings;
+
   return {
     ...b,
+    settings,
     attempts,
     wrong,
     pendingMistake,
@@ -4355,6 +4365,7 @@ async function pullCloud(announce) {
     if (JSON.stringify(merged) !== JSON.stringify(normalizeState(state))) {
       state = merged;
       save(); // persists locally and schedules a push of the merged result
+      applyPlayMode(); // the merge may have changed practiceOnly
       if ($("quiz").classList.contains("hidden")) {
         newGame(true);
         updatePoolPill();
@@ -5442,7 +5453,7 @@ window.__sat = {
   imageIds: () => QUESTIONS.filter(q => q.image).map(q => q.id),
   state: () => state,
   finishReflectTimer: () => { mkStartMs = Date.now() - MIN_REFLECT_SEC * 1000 - 1000; },
-  setInterval_: n => { state.settings.interval = n; save(); updateGameUI(); },
+  setInterval_: n => { state.settings.interval = n; state.settings.changedAt = Date.now(); save(); updateGameUI(); },
   // preview the teacher dashboard with fake data, no sign-in needed
   teacherMock: (students, progress, comments) => {
     userRole = "teacher";
@@ -5456,18 +5467,19 @@ window.__sat = {
 
 /* Another window of the app just saved. Fold its work into this tab now, so the
    two stay one shared record instead of taking turns overwriting each other.
-   This tab's own settings and live board are kept — the merge is for the
-   cumulative record (attempts, seen, review queue, marks, highlights, rush). */
+   This tab's live board is kept; settings follow whichever tab saved them most
+   recently (mergeStates compares settings.changedAt), so a settings change made
+   in one window isn't quietly re-overwritten by a stale copy in another. */
 window.addEventListener("storage", e => {
   if (e.key !== STORAGE_KEY || !e.newValue) return;
   let incoming;
   try { incoming = JSON.parse(e.newValue); } catch (err) { return; }
   if ((incoming.savedAt || 0) <= lastSeenSavedAt) return; // our own write, or older
-  const mySettings = state.settings, myGame = state.game;
+  const myGame = state.game;
   state = mergeStates(state, incoming);
-  state.settings = mySettings;
   state.game = myGame;
   lastSeenSavedAt = incoming.savedAt || 0;
+  applyPlayMode();
   updatePoolPill();
   if (!$("qbank").classList.contains("hidden")) renderQbank();
 });
