@@ -170,6 +170,27 @@
   .hidden { display: none !important; }
   .hint { text-align: center; color: var(--w-mut); font-size: 0.68rem; font-weight: 700; margin-top: 14px; text-transform: uppercase; letter-spacing: 0.14em; }
 
+  /* — Tetris & Dino Run: alternate games sharing the 2048 board shell — */
+  .tboard { display: flex; gap: 10px; }
+  .tfield { flex: 0 0 58%; min-width: 0; }
+  .tfield canvas { display: block; width: 100%; border-radius: 14px; }
+  .tside { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .tcell { background: rgba(241,239,231,0.1); border-radius: 14px; padding: 12px 14px 13px; color: var(--w-cream); }
+  .tcell .tk { font-size: 0.56rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.6; }
+  .tcell .tv { font-size: 1.5rem; font-weight: 900; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .tcell canvas { display: block; width: 100%; margin-top: 8px; }
+  .tcell.keys { flex: 1; display: flex; align-items: flex-end; font-size: 0.6rem; font-weight: 700; line-height: 2; opacity: 0.55; text-transform: uppercase; letter-spacing: 0.08em; }
+  .dino-board canvas { display: block; width: 100%; border-radius: 16px; }
+  /* the decorative ring is sized for the tall boards — shrink it behind the low dino track */
+  #dinoWrap::before { top: 36px; width: 120px; height: 120px; }
+  .touch-pad { display: none; gap: 8px; margin-top: 12px; }
+  .touch-pad button {
+    flex: 1; border: 2.5px solid var(--w-ink); background: var(--w-paper); color: var(--w-ink);
+    border-radius: 14px; font-size: 1.05rem; font-weight: 900; padding: 12px 0; box-shadow: 3px 3px 0 var(--w-ink);
+  }
+  .touch-pad button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--w-ink); }
+  @media (pointer: coarse) { .touch-pad { display: flex; } }
+
   /* — live dashboard rail — */
   .dash { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 32px; }
   .dash-card { background: var(--w-paper); border: 2.5px solid var(--w-ink); border-radius: 22px; box-shadow: 5px 5px 0 var(--w-ink); }
@@ -1268,10 +1289,47 @@
         </div>
         <p class="hint" id="boardHint">Arrow keys / WASD to move · swipe on touch screens</p>
 
+        <div class="board-wrap hidden" id="tetrisWrap">
+          <div class="board">
+            <div class="tboard">
+              <div class="tfield" id="tField"><canvas id="tCanvas"></canvas></div>
+              <div class="tside">
+                <div class="tcell"><div class="tk">Next</div><canvas id="tNextCanvas"></canvas></div>
+                <div class="tcell"><div class="tk">Lines</div><div class="tv" id="tLinesVal">0</div></div>
+                <div class="tcell"><div class="tk">Level</div><div class="tv" id="tLevelVal">1</div></div>
+                <div class="tcell keys"><span>◀ ▶ move<br>↑ rotate · Z back<br>↓ soft drop<br>space hard drop</span></div>
+              </div>
+            </div>
+            <div class="game-msg hidden" id="tMsg">
+              <div id="tMsgText">Game over!</div>
+              <button class="btn primary" id="tMsgBtn">Try again</button>
+            </div>
+          </div>
+          <div class="touch-pad" id="tetrisPad">
+            <button type="button" data-t="left" aria-label="Move left">◀</button>
+            <button type="button" data-t="rot" aria-label="Rotate">⟳</button>
+            <button type="button" data-t="right" aria-label="Move right">▶</button>
+            <button type="button" data-t="soft" aria-label="Soft drop">▼</button>
+            <button type="button" data-t="hard" aria-label="Hard drop">⤓</button>
+          </div>
+        </div>
+        <p class="hint hidden" id="tetrisHint">◀ ▶ move · ↑ rotate · ↓ soft drop · space hard drop</p>
+
+        <div class="board-wrap hidden" id="dinoWrap">
+          <div class="board dino-board">
+            <canvas id="dCanvas"></canvas>
+            <div class="game-msg hidden" id="dMsg">
+              <div id="dMsgText">Game over!</div>
+              <button class="btn primary" id="dMsgBtn">Run again</button>
+            </div>
+          </div>
+        </div>
+        <p class="hint hidden" id="dinoHint">Space / ↑ to jump · ↓ to duck · tap the track to jump</p>
+
         <div class="practice-panel hidden" id="practicePanel">
           <div class="practice-card">
             <span class="sticker">Questions only</span>
-            <h2>The 2048 game is off.</h2>
+            <h2>The game is off.</h2>
             <p>No tiles, no merges — questions come to you back-to-back. Answer, review the rationale (and log any mistake), then grab the next one whenever you're ready.</p>
             <button class="btn primary" id="practiceNextBtn">Get a question</button>
           </div>
@@ -1596,9 +1654,11 @@
     <div class="sheet-body">
       <div class="set-row">
         <h3>Play style</h3>
-        <p class="desc">Earn questions by playing 2048, or skip the game and work through questions back-to-back.</p>
+        <p class="desc">Earn questions by playing 2048, Tetris, or Dino Run — or skip the game and work through questions back-to-back.</p>
         <div class="subj-tabs" id="playModeTabs">
-          <button type="button" class="subj-tab on" data-mode="game">2048 game</button>
+          <button type="button" class="subj-tab on" data-mode="2048">2048</button>
+          <button type="button" class="subj-tab" data-mode="tetris">Tetris</button>
+          <button type="button" class="subj-tab" data-mode="dino">Dino Run</button>
           <button type="button" class="subj-tab" data-mode="practice">Questions only</button>
         </div>
       </div>
@@ -1612,7 +1672,7 @@
       </div>
       <div class="set-row" id="intervalRow">
         <h3>Question frequency</h3>
-        <p class="desc">How many board moves between SAT questions.</p>
+        <p class="desc" id="intervalDesc">How many board moves between SAT questions.</p>
         <div class="slider-row">
           <input type="range" id="intervalRange" min="5" max="30" step="1" />
           <div class="slider-val" id="intervalVal">12 moves</div>
@@ -2080,7 +2140,7 @@ function defaultState() {
   const skills = {};
   for (const [, sm] of DOMAIN_SKILLS) for (const [sk] of sm) skills[sk] = true;
   return {
-    settings: { interval: 12, skills, practiceOnly: false, allowSkipLog: false, changedAt: 0 },
+    settings: { interval: 12, skills, practiceOnly: false, gameType: "2048", allowSkipLog: false, changedAt: 0 },
     seen: {},
     wrong: {},          // id -> {count, lastWrongAt, lastReviewedAt}
     attempts: [],       // {id, at, mode, ans, correctLetter, ok, timeSec, marked, reflection}
@@ -2093,7 +2153,11 @@ function defaultState() {
     rush: { runs: [], setup: null }, // Question Rush history + last-used setup
 
     best: 0,
-    game: null
+    game: null,
+    bestTetris: 0,
+    tetris: null,       // saved Tetris board so a reload resumes the stack
+    bestDino: 0,
+    dino: null          // {sinceQ} — the Dino question meter survives crashes & reloads
   };
 }
 // The `savedAt` of the copy currently in storage, as far as this tab knows. A
@@ -2167,6 +2231,24 @@ const boardEl = $("board"), tilesEl = $("tiles");
 let grid, score = 0, over = false, won = false, animating = false;
 let movesSinceQ = 0;
 let tileSeq = 0;
+
+// Which play surface is active — the game picked in Practice Settings, or
+// "practice" when the questions-only switch is on.
+function gameType() { return state.settings.practiceOnly ? "practice" : (state.settings.gameType || "2048"); }
+// A correct answer pays its bonus into whichever game is active.
+function awardCorrectBonus() {
+  const g = gameType();
+  if (g === "tetris") {
+    tScore += CORRECT_BONUS;
+    if (tScore > (state.bestTetris || 0)) state.bestTetris = tScore;
+    if (tInited) persistTetris();
+  } else if (g === "dino") {
+    dScore += CORRECT_BONUS;
+    if (Math.floor(dScore) > (state.bestDino || 0)) state.bestDino = Math.floor(dScore);
+  } else if (g === "2048") {
+    score += CORRECT_BONUS;
+  } // questions-only mode has no game score
+}
 
 const TILE_STYLE = {
   2:    ["#f1efe7", "#1c1b18", 1.9],
@@ -2257,13 +2339,20 @@ function persistGame() {
   if (score > state.best) state.best = score;
   save();
 }
+// Score, best, and the question meter all follow whichever game is active.
 function updateGameUI() {
-  $("score").textContent = score;
-  $("best").textContent = Math.max(state.best, score);
+  const g = gameType();
+  if (g === "practice") return; // scores and meter are hidden in questions-only mode
+  const sc = g === "tetris" ? tScore : g === "dino" ? Math.floor(dScore) : score;
+  const bst = g === "tetris" ? (state.bestTetris || 0) : g === "dino" ? (state.bestDino || 0) : state.best;
+  $("score").textContent = sc;
+  $("best").textContent = Math.max(bst, sc);
   const interval = state.settings.interval;
-  const left = Math.max(0, interval - movesSinceQ);
-  $("qmeterLabel").textContent = left === 0 ? "now!" : `in ${left} move${left === 1 ? "" : "s"}`;
-  $("qmeterFill").style.width = Math.min(100, (movesSinceQ / interval) * 100) + "%";
+  const n = g === "tetris" ? tSinceQ : g === "dino" ? dSinceQ : movesSinceQ;
+  const unit = g === "tetris" ? "piece" : g === "dino" ? "obstacle" : "move";
+  const left = Math.max(0, interval - n);
+  $("qmeterLabel").textContent = left === 0 ? "now!" : `in ${left} ${unit}${left === 1 ? "" : "s"}`;
+  $("qmeterFill").style.width = Math.min(100, (n / interval) * 100) + "%";
 }
 function canMove() {
   if (emptyCells().length) return true;
@@ -2276,7 +2365,7 @@ function canMove() {
 }
 const VECTORS = { up: [0, -1], right: [1, 0], down: [0, 1], left: [-1, 0] };
 function move(dir) {
-  if (quizOpen || rushOpen || over || animating || state.settings.practiceOnly) return;
+  if (quizOpen || rushOpen || over || animating || gameType() !== "2048") return;
   const [vx, vy] = VECTORS[dir];
   const xs = [...Array(SIZE).keys()]; if (vx === 1) xs.reverse();
   const ys = [...Array(SIZE).keys()]; if (vy === 1) ys.reverse();
@@ -2339,18 +2428,38 @@ function move(dir) {
   }, 115);
 }
 
+const GAME_OVERLAYS = ["settingsOverlay", "statsOverlay", "rushSetupOverlay", "rushResultsOverlay", "accountOverlay", "aiOverlay", "externalOverlay"];
 document.addEventListener("keydown", e => {
   const t = e.target;
   if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
   if (quizOpen || rushOpen) return;
-  if (["settingsOverlay", "statsOverlay", "rushSetupOverlay", "rushResultsOverlay", "accountOverlay", "aiOverlay", "externalOverlay"].some(id => !$(id).classList.contains("hidden"))) return;
-  const map = {
-    ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right",
-    w: "up", s: "down", a: "left", d: "right",
-    W: "up", S: "down", A: "left", D: "right"
-  };
-  const dir = map[e.key];
-  if (dir) { e.preventDefault(); move(dir); }
+  if (GAME_OVERLAYS.some(id => !$(id).classList.contains("hidden"))) return;
+  const g = gameType();
+  if (g === "2048") {
+    const map = {
+      ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right",
+      w: "up", s: "down", a: "left", d: "right",
+      W: "up", S: "down", A: "left", D: "right"
+    };
+    const dir = map[e.key];
+    if (dir) { e.preventDefault(); move(dir); }
+  } else if (g === "tetris") {
+    const k = e.key;
+    if (k === "ArrowLeft" || k === "a" || k === "A") { e.preventDefault(); tTryMove(-1); }
+    else if (k === "ArrowRight" || k === "d" || k === "D") { e.preventDefault(); tTryMove(1); }
+    else if (k === "ArrowDown" || k === "s" || k === "S") { e.preventDefault(); tSoftDrop(); }
+    else if (k === "ArrowUp" || k === "w" || k === "W" || k === "x" || k === "X") { e.preventDefault(); if (!e.repeat) tRotate(1); }
+    else if (k === "z" || k === "Z") { e.preventDefault(); if (!e.repeat) tRotate(-1); }
+    else if (k === " ") { e.preventDefault(); if (!e.repeat) tHardDrop(); }
+  } else if (g === "dino") {
+    const k = e.key;
+    if (k === " " || k === "ArrowUp" || k === "w" || k === "W") { e.preventDefault(); if (!e.repeat) dinoJump(); }
+    else if (k === "ArrowDown" || k === "s" || k === "S") { e.preventDefault(); dinoDuck(true); }
+  }
+});
+document.addEventListener("keyup", e => {
+  if (gameType() !== "dino") return;
+  if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") dinoDuck(false);
 });
 let touchStart = null;
 boardEl.addEventListener("touchstart", e => {
@@ -2364,8 +2473,498 @@ boardEl.addEventListener("touchend", e => {
   if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
   move(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up"));
 });
-$("newGameBtn").addEventListener("click", () => newGame(false));
+$("newGameBtn").addEventListener("click", () => {
+  const g = gameType();
+  if (g === "tetris") tetrisNew();
+  else if (g === "dino") dinoNew();
+  else newGame(false);
+});
 $("gameMsgBtn").addEventListener("click", () => newGame(false));
+
+/* ================= Tetris =================
+   Built from scratch on the same board shell as 2048: dark ink frame, faint
+   cream wells, block colors pulled from the tile palette. Each locked piece
+   counts toward the next SAT question, and the stack survives reloads. */
+const T_COLS = 10, T_ROWS = 20;
+const T_KEYS = ["I", "O", "T", "S", "Z", "J", "L"];
+const T_COLORS = {
+  I: "#a8ce32", O: "#d9b514", T: "#8b8be6", S: "#c5e04a",
+  Z: "#cf3b30", J: "#4a49b8", L: "#d98324"
+};
+const T_BASE = {
+  I: [[0, 1], [1, 1], [2, 1], [3, 1]],
+  O: [[1, 0], [2, 0], [1, 1], [2, 1]],
+  T: [[1, 0], [0, 1], [1, 1], [2, 1]],
+  S: [[1, 0], [2, 0], [0, 1], [1, 1]],
+  Z: [[0, 0], [1, 0], [1, 1], [2, 1]],
+  J: [[0, 0], [0, 1], [1, 1], [2, 1]],
+  L: [[2, 0], [0, 1], [1, 1], [2, 1]]
+};
+// four rotation states per piece, precomputed by spinning each within its box
+const T_ROTS = {};
+for (const k of T_KEYS) {
+  const n = (k === "I" || k === "O") ? 4 : 3;
+  let cells = T_BASE[k];
+  T_ROTS[k] = [];
+  for (let r = 0; r < 4; r++) {
+    T_ROTS[k].push(cells);
+    cells = cells.map(([x, y]) => [n - 1 - y, x]);
+  }
+}
+const tCanvas = $("tCanvas"), tCtx = tCanvas.getContext("2d");
+const tNextCanvas = $("tNextCanvas"), tNextCtx = tNextCanvas.getContext("2d");
+let tBoard = null, tCur = null, tNextK = null, tBag = [];
+let tScore = 0, tLines = 0, tLevel = 1, tSinceQ = 0, tOver = false;
+let tDropAcc = 0, tCellPx = 0, tNextW = 0, tNextH = 0, tInited = false;
+
+function rrect(g, x, y, w, h, r) {
+  g.beginPath();
+  if (g.roundRect) g.roundRect(x, y, w, h, r);
+  else g.rect(x, y, w, h);
+}
+function tBagNext() {
+  if (!tBag.length) {
+    tBag = T_KEYS.slice();
+    for (let i = tBag.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [tBag[i], tBag[j]] = [tBag[j], tBag[i]];
+    }
+  }
+  return tBag.pop();
+}
+function tCells() { return T_ROTS[tCur.k][tCur.r]; }
+function tFits(px, py, r) {
+  for (const [cx, cy] of T_ROTS[tCur.k][r === undefined ? tCur.r : r]) {
+    const x = px + cx, y = py + cy;
+    if (x < 0 || x >= T_COLS || y >= T_ROWS) return false;
+    if (y >= 0 && tBoard[y][x]) return false;
+  }
+  return true;
+}
+function tSpawn() {
+  tCur = { k: tNextK || tBagNext(), r: 0, x: 3, y: -1 };
+  tNextK = tBagNext();
+  tDrawNext();
+  if (!tFits(tCur.x, tCur.y)) tGameOver();
+}
+function tGameOver() {
+  tOver = true;
+  if (tScore > (state.bestTetris || 0)) state.bestTetris = tScore;
+  $("tMsgText").textContent = "Game over!";
+  $("tMsg").classList.remove("hidden");
+  persistTetris();
+  updateGameUI();
+}
+function tetrisNew() {
+  tBoard = Array.from({ length: T_ROWS }, () => Array(T_COLS).fill(null));
+  tScore = 0; tLines = 0; tLevel = 1; tSinceQ = 0; tOver = false;
+  tBag = []; tNextK = null; tDropAcc = 0;
+  $("tMsg").classList.add("hidden");
+  tSpawn();
+  persistTetris();
+  tetrisStats();
+  updateGameUI();
+  tDraw();
+}
+// Rebuild the engine from state.tetris (saved stack) — or start fresh.
+function tetrisRestore() {
+  const s = state.tetris;
+  if (!s || !s.board || s.over) { tetrisNew(); return; }
+  tBoard = s.board.map(row => row.map(v => v || null));
+  tScore = s.score || 0; tLines = s.lines || 0; tLevel = s.level || 1;
+  tSinceQ = s.sinceQ || 0; tOver = false;
+  tBag = []; tNextK = null; tDropAcc = 0;
+  $("tMsg").classList.add("hidden");
+  tSpawn();
+  tetrisStats();
+  updateGameUI();
+  tDraw();
+}
+function tetrisEnsure() {
+  if (!tInited) { tInited = true; tetrisRestore(); }
+  tetrisLayout();
+  tDraw();
+}
+function tetrisLayout() {
+  const w = $("tField").clientWidth;
+  if (!w) return;
+  const dpr = window.devicePixelRatio || 1;
+  tCellPx = w / T_COLS;
+  tCanvas.style.height = (w * 2) + "px";
+  tCanvas.width = Math.round(w * dpr);
+  tCanvas.height = Math.round(w * 2 * dpr);
+  tCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  tNextW = tNextCanvas.clientWidth || 90;
+  tNextH = Math.round(tNextW * 0.55);
+  tNextCanvas.style.height = tNextH + "px";
+  tNextCanvas.width = Math.round(tNextW * dpr);
+  tNextCanvas.height = Math.round(tNextH * dpr);
+  tNextCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  tDrawNext();
+}
+function tDrawNext() {
+  if (!tNextK || !tNextW) return;
+  tNextCtx.clearRect(0, 0, tNextW, tNextH);
+  const cells = T_ROTS[tNextK][0];
+  const xs = cells.map(c => c[0]), ys = cells.map(c => c[1]);
+  const minX = Math.min(...xs), minY = Math.min(...ys);
+  const cw = Math.max(...xs) - minX + 1, ch = Math.max(...ys) - minY + 1;
+  const s = Math.min(tNextW / (cw + 0.8), tNextH / (ch + 0.8));
+  const ox = (tNextW - cw * s) / 2, oy = (tNextH - ch * s) / 2;
+  tNextCtx.fillStyle = T_COLORS[tNextK];
+  for (const [cx, cy] of cells) {
+    rrect(tNextCtx, ox + (cx - minX) * s + 1, oy + (cy - minY) * s + 1, s - 2, s - 2, Math.max(3, s * 0.18));
+    tNextCtx.fill();
+  }
+}
+function tDraw() {
+  if (!tCellPx || gameType() !== "tetris") return;
+  const c = tCellPx, rad = Math.max(3, c * 0.16);
+  tCtx.clearRect(0, 0, c * T_COLS, c * T_ROWS);
+  for (let y = 0; y < T_ROWS; y++) for (let x = 0; x < T_COLS; x++) {
+    const k = tBoard[y][x];
+    tCtx.fillStyle = k ? T_COLORS[k] : "rgba(241,239,231,0.1)";
+    rrect(tCtx, x * c + 1.5, y * c + 1.5, c - 3, c - 3, rad);
+    tCtx.fill();
+  }
+  if (tCur && !tOver) {
+    // ghost outline where the piece would land
+    let gy = tCur.y;
+    while (tFits(tCur.x, gy + 1)) gy++;
+    tCtx.strokeStyle = "rgba(241,239,231,0.4)";
+    tCtx.lineWidth = 2;
+    for (const [cx, cy] of tCells()) {
+      if (gy + cy < 0) continue;
+      rrect(tCtx, (tCur.x + cx) * c + 3, (gy + cy) * c + 3, c - 6, c - 6, rad);
+      tCtx.stroke();
+    }
+    tCtx.fillStyle = T_COLORS[tCur.k];
+    for (const [cx, cy] of tCells()) {
+      if (tCur.y + cy < 0) continue;
+      rrect(tCtx, (tCur.x + cx) * c + 1.5, (tCur.y + cy) * c + 1.5, c - 3, c - 3, rad);
+      tCtx.fill();
+    }
+  }
+}
+function tGuard() { return !tInited || tOver || !tCur || quizOpen || rushOpen || gameType() !== "tetris"; }
+function tTryMove(dx) {
+  if (tGuard()) return;
+  if (tFits(tCur.x + dx, tCur.y)) { tCur.x += dx; tDraw(); }
+}
+function tRotate(dir) {
+  if (tGuard()) return;
+  const r = (tCur.r + dir + 4) % 4;
+  for (const kick of [0, -1, 1, -2, 2]) {
+    if (tFits(tCur.x + kick, tCur.y, r)) { tCur.r = r; tCur.x += kick; tDraw(); return; }
+  }
+}
+function tSoftDrop() {
+  if (tGuard()) return;
+  if (tFits(tCur.x, tCur.y + 1)) { tCur.y++; tScore++; tDropAcc = 0; updateGameUI(); tDraw(); }
+  else tLock();
+}
+function tHardDrop() {
+  if (tGuard()) return;
+  let d = 0;
+  while (tFits(tCur.x, tCur.y + 1)) { tCur.y++; d++; }
+  tScore += d * 2;
+  tLock();
+}
+function tDropMs() { return Math.max(90, 720 * Math.pow(0.85, tLevel - 1)); }
+function tetrisFrame(dt) {
+  if (!tInited || tOver || !tCur) return;
+  tDropAcc += dt * 1000;
+  const ms = tDropMs();
+  while (tDropAcc >= ms) {
+    tDropAcc -= ms;
+    if (tFits(tCur.x, tCur.y + 1)) tCur.y++;
+    else { tLock(); break; }
+  }
+  tDraw();
+}
+function tLock() {
+  for (const [cx, cy] of tCells()) {
+    const y = tCur.y + cy;
+    if (y < 0) { tGameOver(); return; } // locked above the top edge
+    tBoard[y][tCur.x + cx] = tCur.k;
+  }
+  let cleared = 0;
+  for (let y = T_ROWS - 1; y >= 0; y--) {
+    if (tBoard[y].every(v => v)) {
+      tBoard.splice(y, 1);
+      tBoard.unshift(Array(T_COLS).fill(null));
+      cleared++; y++;
+    }
+  }
+  if (cleared) {
+    tScore += [0, 100, 300, 500, 800][cleared] * tLevel;
+    tLines += cleared;
+    tLevel = 1 + Math.floor(tLines / 10);
+  }
+  if (tScore > (state.bestTetris || 0)) state.bestTetris = tScore;
+  tSinceQ++;
+  tDropAcc = 0;
+  tSpawn();
+  persistTetris();
+  tetrisStats();
+  updateGameUI();
+  tDraw();
+  if (!tOver && tSinceQ >= state.settings.interval) setTimeout(openQuiz, 300);
+}
+function tetrisStats() {
+  $("tLinesVal").textContent = tLines;
+  $("tLevelVal").textContent = tLevel;
+}
+function persistTetris() {
+  state.tetris = {
+    board: tBoard.map(row => row.map(v => v || 0)),
+    score: tScore, lines: tLines, level: tLevel, sinceQ: tSinceQ, over: tOver
+  };
+  save();
+}
+$("tMsgBtn").addEventListener("click", tetrisNew);
+$("tetrisPad").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  const act = { left: () => tTryMove(-1), right: () => tTryMove(1), rot: () => tRotate(1), soft: tSoftDrop, hard: tHardDrop }[b.dataset.t];
+  if (act) act();
+});
+// touch: drag sideways to shift, tap to rotate, flick down to hard-drop
+let tTouch = null;
+tCanvas.addEventListener("touchstart", e => {
+  if (e.touches.length === 1) tTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now(), moved: false };
+}, { passive: true });
+tCanvas.addEventListener("touchmove", e => {
+  if (!tTouch) return;
+  const dx = e.touches[0].clientX - tTouch.x;
+  const step = Math.max(24, tCellPx || 30);
+  if (Math.abs(dx) >= step) {
+    tTryMove(dx > 0 ? 1 : -1);
+    tTouch.x += Math.sign(dx) * step;
+    tTouch.moved = true;
+  }
+}, { passive: true });
+tCanvas.addEventListener("touchend", e => {
+  if (!tTouch) return;
+  const dy = e.changedTouches[0].clientY - tTouch.y;
+  const held = Date.now() - tTouch.t;
+  const moved = tTouch.moved;
+  tTouch = null;
+  if (dy > 70 && held < 400) { tHardDrop(); return; }
+  if (!moved && Math.abs(dy) < 18 && held < 350) tRotate(1);
+});
+
+/* ================= Dino Run =================
+   Chrome-dino-style endless runner, redrawn from scratch in the site
+   palette: ink runner on a cream track, lime-deep cacti, purple birds.
+   Every obstacle cleared counts toward the next SAT question; that meter
+   (unlike the run itself) survives crashes and reloads. */
+const D_W = 560, D_H = 230, D_GROUND = 190, D_DINO_X = 46;
+const dCanvas = $("dCanvas"), dCtx = dCanvas.getContext("2d");
+let dInited = false;
+let dOver = false, dScore = 0, dSpeed = 320, dTime = 0, dUiAcc = 0;
+let dDinoY = 0, dVy = 0, dDuck = false;
+let dObs = [], dClouds = [], dPebbles = [], dSpawnIn = 0;
+let dSinceQ = 0;
+
+function dinoEnsure() {
+  if (!dInited) {
+    dInited = true;
+    dSinceQ = (state.dino && state.dino.sinceQ) || 0;
+    dinoNew();
+  }
+  dinoLayout();
+  dDraw();
+}
+function dinoNew() {
+  if (!dInited) return; // first activation goes through dinoEnsure()
+  dOver = false; dScore = 0; dSpeed = 320; dTime = 0;
+  dDinoY = 0; dVy = 0; dDuck = false;
+  dObs = []; dSpawnIn = 460;
+  dClouds = [{ x: 120, y: 42 }, { x: 330, y: 72 }, { x: 500, y: 30 }];
+  dPebbles = Array.from({ length: 24 }, () => ({ x: Math.random() * D_W, w: 4 + Math.random() * 8 }));
+  $("dMsg").classList.add("hidden");
+  updateGameUI();
+  dDraw();
+}
+function dinoLayout() {
+  const w = dCanvas.clientWidth || (dCanvas.parentElement && dCanvas.parentElement.clientWidth);
+  if (!w) return;
+  const dpr = window.devicePixelRatio || 1;
+  dCanvas.style.height = Math.round(w * D_H / D_W) + "px";
+  dCanvas.width = Math.round(w * dpr);
+  dCanvas.height = Math.round(w * D_H / D_W * dpr);
+  const s = (w * dpr) / D_W;
+  dCtx.setTransform(s, 0, 0, s, 0, 0);
+}
+function dinoBox() {
+  const ducking = dDuck && dDinoY === 0;
+  const h = ducking ? 26 : 46, w = ducking ? 56 : 34;
+  return { x: D_DINO_X, y: D_GROUND - h - dDinoY, w, h, ducking };
+}
+function dSpawnObstacle() {
+  if (dScore > 130 && Math.random() < 0.32) {
+    // bird heights: low (jump it), mid (duck under it), high (run under it)
+    const hgt = [30, 62, 116][Math.floor(Math.random() * 3)];
+    dObs.push({ bird: true, x: D_W + 20, w: 36, h: 24, y: D_GROUND - hgt, ph: Math.random() * 6 });
+  } else {
+    const big = Math.random() < 0.45;
+    const n = 1 + Math.floor(Math.random() * (big ? 2 : 3));
+    const uw = big ? 20 : 14, uh = big ? 46 : 30;
+    dObs.push({ x: D_W + 20, w: n * uw + (n - 1) * 4, h: uh, y: D_GROUND - uh, n, uw, big });
+  }
+  dSpawnIn = 300 + Math.random() * 380 + dSpeed * 0.22;
+}
+function dinoJump() {
+  if (!dInited || quizOpen || rushOpen || gameType() !== "dino") return;
+  if (dOver) { dinoNew(); return; }
+  if (dDinoY === 0) dVy = 640;
+}
+function dinoDuck(on) {
+  if (!dInited || gameType() !== "dino") return;
+  dDuck = on;
+}
+function dinoCrash() {
+  dOver = true;
+  const sc = Math.floor(dScore);
+  if (sc > (state.bestDino || 0)) state.bestDino = sc;
+  state.dino = { sinceQ: dSinceQ };
+  save();
+  updateGameUI();
+  dDraw();
+  $("dMsgText").textContent = `Game over — ${sc} pts`;
+  $("dMsg").classList.remove("hidden");
+}
+function dinoFrame(dt) {
+  if (!dInited || dOver) return;
+  dTime += dt;
+  dSpeed = Math.min(760, 320 + dTime * 9);
+  dScore += dSpeed * dt / 28;
+  if (dDinoY > 0 || dVy > 0) {
+    dVy -= 2000 * dt * (dDuck ? 2.2 : 1); // ducking mid-air slams back down
+    dDinoY += dVy * dt;
+    if (dDinoY <= 0) { dDinoY = 0; dVy = 0; }
+  }
+  for (const cl of dClouds) {
+    cl.x -= dSpeed * dt * 0.12;
+    if (cl.x < -70) { cl.x = D_W + 40; cl.y = 24 + Math.random() * 60; }
+  }
+  for (const p of dPebbles) { p.x -= dSpeed * dt; if (p.x < -12) p.x += D_W + 24; }
+  dSpawnIn -= dSpeed * dt;
+  if (dSpawnIn <= 0) dSpawnObstacle();
+  for (const ob of dObs) {
+    ob.x -= dSpeed * dt;
+    if (ob.bird) ob.ph += dt * 7;
+  }
+  while (dObs.length && dObs[0].x + dObs[0].w < -20) dObs.shift();
+  for (const ob of dObs) {
+    if (!ob.passed && ob.x + ob.w < D_DINO_X) {
+      ob.passed = true;
+      dSinceQ++;
+      state.dino = { sinceQ: dSinceQ };
+      save();
+      updateGameUI();
+      if (dSinceQ >= state.settings.interval) { setTimeout(openQuiz, 250); break; }
+    }
+  }
+  const b = dinoBox();
+  for (const ob of dObs) {
+    if (b.x < ob.x + ob.w - 6 && b.x + b.w > ob.x + 6 && b.y < ob.y + ob.h - 6 && b.y + b.h > ob.y + 6) {
+      dinoCrash();
+      return;
+    }
+  }
+  dUiAcc += dt;
+  if (dUiAcc > 0.15) { dUiAcc = 0; updateGameUI(); }
+  dDraw();
+}
+function dDraw() {
+  if (gameType() !== "dino" || !dCanvas.clientWidth) return;
+  const g = dCtx;
+  g.clearRect(0, 0, D_W, D_H);
+  g.fillStyle = "#f1efe7"; // cream track card inside the ink frame
+  g.fillRect(0, 0, D_W, D_H);
+  g.fillStyle = "#dcd8c8";
+  for (const cl of dClouds) {
+    rrect(g, cl.x, cl.y, 56, 12, 6); g.fill();
+    rrect(g, cl.x + 10, cl.y - 8, 30, 12, 6); g.fill();
+  }
+  g.strokeStyle = "#1c1b18";
+  g.lineWidth = 2.5;
+  g.beginPath(); g.moveTo(0, D_GROUND + 1); g.lineTo(D_W, D_GROUND + 1); g.stroke();
+  g.fillStyle = "#b7b3a2";
+  for (const p of dPebbles) g.fillRect(p.x, D_GROUND + 10 + (p.w % 3) * 4, p.w, 2.5);
+  for (const ob of dObs) {
+    if (ob.bird) {
+      g.fillStyle = "#8b8be6";
+      rrect(g, ob.x, ob.y + 6, ob.w, 12, 6); g.fill();                 // body
+      rrect(g, ob.x + ob.w - 12, ob.y, 14, 11, 4); g.fill();           // head
+      g.fillStyle = "#6f6fd6";
+      const flap = Math.sin(ob.ph) * 8;
+      rrect(g, ob.x + 8, ob.y + 8 - Math.max(0, flap), 15, 6, 3); g.fill(); // wing
+      g.fillStyle = "#1c1b18";
+      g.fillRect(ob.x + ob.w + 1, ob.y + 4, 5, 3);                     // beak
+    } else {
+      g.fillStyle = "#5d6e14";
+      for (let i = 0; i < ob.n; i++) {
+        const x = ob.x + i * (ob.uw + 4);
+        rrect(g, x, ob.y, ob.uw, ob.h, 5); g.fill();
+        if (ob.big) {
+          rrect(g, x - 6, ob.y + 10, 8, 14, 4); g.fill();
+          rrect(g, x + ob.uw - 2, ob.y + 16, 8, 12, 4); g.fill();
+        }
+      }
+    }
+  }
+  // the runner
+  const b = dinoBox();
+  g.fillStyle = "#1c1b18";
+  if (b.ducking) {
+    rrect(g, b.x, b.y + 8, 42, 18, 8); g.fill();       // long low body
+    rrect(g, b.x + 38, b.y, 18, 14, 6); g.fill();      // head forward
+    rrect(g, b.x - 8, b.y + 10, 10, 5, 2); g.fill();   // tail
+    g.fillStyle = "#f1efe7";
+    g.fillRect(b.x + 49, b.y + 4, 3, 3);               // eye
+  } else {
+    rrect(g, b.x, b.y + 12, 26, 22, 8); g.fill();      // body
+    rrect(g, b.x + 12, b.y, 22, 18, 6); g.fill();      // head
+    rrect(g, b.x - 8, b.y + 14, 10, 5, 2); g.fill();   // tail
+    g.fillRect(b.x + 22, b.y + 22, 8, 3);              // arm
+    const ph = dDinoY === 0 && !dOver ? Math.floor(dTime * 10) % 2 : 0;
+    g.fillRect(b.x + 5, b.y + 32, 6, 14 - (ph ? 5 : 0));  // legs
+    g.fillRect(b.x + 17, b.y + 32, 6, 14 - (ph ? 0 : 5));
+    g.fillStyle = "#f1efe7";
+    g.fillRect(b.x + 26, b.y + 5, 3, 3);               // eye
+  }
+}
+$("dMsgBtn").addEventListener("click", dinoJump);
+dCanvas.addEventListener("pointerdown", e => { e.preventDefault(); dinoJump(); });
+
+/* ================= Shared game loop ================= */
+// One rAF loop drives whichever real-time game is active; it idles (and
+// discards elapsed time) while a quiz, rush, or any overlay is up.
+function gamesPaused() {
+  return quizOpen || rushOpen || document.hidden ||
+    $("mshell").classList.contains("hidden") ||
+    GAME_OVERLAYS.some(id => !$(id).classList.contains("hidden"));
+}
+let gLastTs = 0;
+function gameLoop(ts) {
+  const dt = Math.min(0.05, Math.max(0, (ts - gLastTs) / 1000));
+  gLastTs = ts;
+  if (!gamesPaused()) {
+    const g = gameType();
+    if (g === "tetris") tetrisFrame(dt);
+    else if (g === "dino") dinoFrame(dt);
+  }
+  requestAnimationFrame(gameLoop);
+}
+requestAnimationFrame(gameLoop);
+window.addEventListener("resize", () => {
+  const g = gameType();
+  if (g === "tetris") { tetrisLayout(); tDraw(); }
+  else if (g === "dino") { dinoLayout(); dDraw(); }
+});
 
 /* ================= Question selection ================= */
 function pool() {
@@ -2697,7 +3296,7 @@ function finalizeAnswer() {
   };
 
   if (!hadMistakes) {
-    score += CORRECT_BONUS;
+    awardCorrectBonus();
     if (activeIsReview) delete state.wrong[activeQ.id];
     state.attempts.push(pendingAttempt);
     pendingAttempt = null;
@@ -3021,7 +3620,12 @@ function closeQuiz() {
   clearInterval(qTimerInt);
   clearInterval(mkInt);
   quizOpen = false;
+  // the question was served — every game's meter starts over
   movesSinceQ = 0;
+  tSinceQ = 0;
+  if (state.tetris) state.tetris.sinceQ = 0;
+  dSinceQ = 0;
+  if (state.dino) state.dino.sinceQ = 0;
   $("quiz").classList.add("hidden");
   $("quiz").setAttribute("aria-hidden", "true");
   $("reviewOverlay").classList.add("hidden");
@@ -3223,29 +3827,55 @@ $("hlBtn").addEventListener("click", () => {
   else toast("Select text in the passage or question, then pick a color.");
 });
 
-/* ================= Play style (2048 game vs questions-only) ================= */
-// Swaps the board out for a plain "get a question" panel — for practicing
-// without needing to play 2048 to earn each question.
+/* ================= Play style (2048 / Tetris / Dino / questions-only) ================= */
+// Shows the board for the chosen game, or swaps them all out for a plain
+// "get a question" panel when the questions-only switch is on.
 function applyPlayMode() {
-  const on = !!state.settings.practiceOnly;
-  $("qmeterBox").classList.toggle("hidden", on);
-  $("boardWrap").classList.toggle("hidden", on);
-  $("boardHint").classList.toggle("hidden", on);
-  $("practicePanel").classList.toggle("hidden", !on);
-  $("scoresBox").classList.toggle("hidden", on);
-  $("mSub").textContent = on
-    ? "Questions only — no tiles, no merges, just practice."
-    : "Merge tiles, earn SAT questions, log every miss.";
+  const g = gameType();
+  const practice = g === "practice";
+  $("qmeterBox").classList.toggle("hidden", practice);
+  $("scoresBox").classList.toggle("hidden", practice);
+  $("practicePanel").classList.toggle("hidden", !practice);
+  $("boardWrap").classList.toggle("hidden", g !== "2048");
+  $("boardHint").classList.toggle("hidden", g !== "2048");
+  $("tetrisWrap").classList.toggle("hidden", g !== "tetris");
+  $("tetrisHint").classList.toggle("hidden", g !== "tetris");
+  $("dinoWrap").classList.toggle("hidden", g !== "dino");
+  $("dinoHint").classList.toggle("hidden", g !== "dino");
+  $("mSub").textContent =
+    practice ? "Questions only — no tiles, no merges, just practice." :
+    g === "tetris" ? "Clear lines, earn SAT questions, log every miss." :
+    g === "dino" ? "Jump the cacti, earn SAT questions, log every miss." :
+    "Merge tiles, earn SAT questions, log every miss.";
+  if (g === "2048") layout();          // the board may have been hidden at boot
+  else if (g === "tetris") tetrisEnsure();
+  else if (g === "dino") dinoEnsure();
+  updateGameUI();
 }
 $("practiceNextBtn").addEventListener("click", () => openQuiz());
 
 /* ================= Settings ================= */
+// The frequency slider's wording follows the selected game's unit of play.
+const INTERVAL_COPY = {
+  "2048": ["board moves", "moves"],
+  tetris: ["pieces placed", "pieces"],
+  dino: ["obstacles cleared", "obstacles"]
+};
+function updateIntervalUI() {
+  const tab = document.querySelector("#playModeTabs .subj-tab.on");
+  const mode = tab ? tab.dataset.mode : "2048";
+  $("intervalRow").classList.toggle("hidden", mode === "practice");
+  if (mode === "practice") return;
+  const [desc, unit] = INTERVAL_COPY[mode] || INTERVAL_COPY["2048"];
+  $("intervalDesc").textContent = `How many ${desc} between SAT questions.`;
+  $("intervalVal").textContent = $("intervalRange").value + " " + unit;
+}
 function openSettings() {
   $("intervalRange").value = state.settings.interval;
-  $("intervalVal").textContent = state.settings.interval + " moves";
+  const curMode = state.settings.practiceOnly ? "practice" : (state.settings.gameType || "2048");
   document.querySelectorAll("#playModeTabs .subj-tab").forEach(t =>
-    t.classList.toggle("on", t.dataset.mode === (state.settings.practiceOnly ? "practice" : "game")));
-  $("intervalRow").classList.toggle("hidden", state.settings.practiceOnly);
+    t.classList.toggle("on", t.dataset.mode === curMode));
+  updateIntervalUI();
   document.querySelectorAll("#skipLogTabs .subj-tab").forEach(t =>
     t.classList.toggle("on", (t.dataset.skip === "1") === !!state.settings.allowSkipLog));
   const box = $("domainGroups");
@@ -3296,13 +3926,11 @@ document.addEventListener("change", e => {
     syncDomainChecks(); updatePoolCount();
   }
 });
-$("intervalRange").addEventListener("input", () => {
-  $("intervalVal").textContent = $("intervalRange").value + " moves";
-});
+$("intervalRange").addEventListener("input", updateIntervalUI);
 document.querySelectorAll("#playModeTabs .subj-tab").forEach(t => {
   t.addEventListener("click", () => {
     document.querySelectorAll("#playModeTabs .subj-tab").forEach(o => o.classList.toggle("on", o === t));
-    $("intervalRow").classList.toggle("hidden", t.dataset.mode === "practice");
+    updateIntervalUI();
   });
 });
 document.querySelectorAll("#skipLogTabs .subj-tab").forEach(t => {
@@ -3314,7 +3942,9 @@ $("settingsSave").addEventListener("click", () => {
   if (!checkedSkills.size) { toast("Select at least one skill."); return; }
   for (const k of Object.keys(state.settings.skills)) state.settings.skills[k] = checkedSkills.has(k);
   state.settings.interval = parseInt($("intervalRange").value, 10);
-  state.settings.practiceOnly = document.querySelector("#playModeTabs .subj-tab.on").dataset.mode === "practice";
+  const mode = document.querySelector("#playModeTabs .subj-tab.on").dataset.mode;
+  state.settings.practiceOnly = mode === "practice";
+  if (mode !== "practice") state.settings.gameType = mode;
   state.settings.allowSkipLog = document.querySelector("#skipLogTabs .subj-tab.on").dataset.skip === "1";
   state.settings.changedAt = Date.now();
   save();
@@ -3418,6 +4048,9 @@ $("resetBtn").addEventListener("click", () => {
   save({ replace: true }); // write the empty state so other open tabs pick it up too
   $("statsOverlay").classList.add("hidden");
   newGame(false);
+  if (tInited) tetrisRestore();
+  if (dInited) { dSinceQ = 0; dinoNew(); }
+  applyPlayMode(); // the reset may have switched the active game back to 2048
   updatePoolPill();
   if (cloudUser) pushCloudNow();
   toast("All data reset.");
@@ -3874,6 +4507,9 @@ function restoreBackup(file) {
     state = { ...d, ...incoming, settings: { ...d.settings, ...(incoming.settings || {}), skills: { ...d.settings.skills, ...((incoming.settings || {}).skills || {}) } } };
     save({ replace: true }); // a restore replaces what's in the browser, by definition
     newGame(true);
+    if (tInited) tetrisRestore();
+    if (dInited) { dSinceQ = (state.dino && state.dino.sinceQ) || 0; dinoNew(); }
+    applyPlayMode(); // the backup may have used a different game
     updatePoolPill();
     $("statsOverlay").classList.add("hidden");
     toast(`Restored ${count} attempts from backup.`);
@@ -4293,7 +4929,9 @@ function mergeStates(older, newer) {
     marked: { ...a.marked, ...b.marked },
     highlights: { ...a.highlights, ...b.highlights },
     rush: { ...(a.rush || {}), ...(b.rush || {}), runs: rushRuns },
-    best: Math.max(a.best || 0, b.best || 0)
+    best: Math.max(a.best || 0, b.best || 0),
+    bestTetris: Math.max(a.bestTetris || 0, b.bestTetris || 0),
+    bestDino: Math.max(a.bestDino || 0, b.bestDino || 0)
   };
 }
 
@@ -4368,6 +5006,8 @@ async function pullCloud(announce) {
       applyPlayMode(); // the merge may have changed practiceOnly
       if ($("quiz").classList.contains("hidden")) {
         newGame(true);
+        if (tInited) tetrisRestore(); // rebuild the stack from the merged copy too
+        if (dInited) dSinceQ = (state.dino && state.dino.sinceQ) || 0;
         updatePoolPill();
         resumeUnfinished(); // work left open on another device is still owed
       }
@@ -5454,6 +6094,9 @@ window.__sat = {
   state: () => state,
   finishReflectTimer: () => { mkStartMs = Date.now() - MIN_REFLECT_SEC * 1000 - 1000; },
   setInterval_: n => { state.settings.interval = n; state.settings.changedAt = Date.now(); save(); updateGameUI(); },
+  // step the real-time games without waiting on requestAnimationFrame
+  tetrisFrame, tHardDrop, tetrisState: () => ({ tScore, tLines, tLevel, tSinceQ, tOver }),
+  dinoFrame, dinoJump, dinoDuck, dinoState: () => ({ dScore, dSpeed, dSinceQ, dOver, dDinoY, obs: dObs.map(o => ({ x: o.x, w: o.w, y: o.y, bird: !!o.bird })) }),
   // preview the teacher dashboard with fake data, no sign-in needed
   teacherMock: (students, progress, comments) => {
     userRole = "teacher";
@@ -5475,9 +6118,11 @@ window.addEventListener("storage", e => {
   let incoming;
   try { incoming = JSON.parse(e.newValue); } catch (err) { return; }
   if ((incoming.savedAt || 0) <= lastSeenSavedAt) return; // our own write, or older
-  const myGame = state.game;
+  const myGame = state.game, myTetris = state.tetris, myDino = state.dino;
   state = mergeStates(state, incoming);
   state.game = myGame;
+  state.tetris = myTetris;
+  state.dino = myDino;
   lastSeenSavedAt = incoming.savedAt || 0;
   applyPlayMode();
   updatePoolPill();
