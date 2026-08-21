@@ -84,6 +84,16 @@ A teacher can watch students' progress and comment on their mistakes:
    reflection — and a comment box. Comments appear on the student's side
    wherever they review that question (question bank, statistics → recent
    attempts), marked 💬.
+4. **Teacher tools per class:** summary chips (class accuracy, attempts this
+   week, who practiced), a *Class insights* panel (14-day activity chart,
+   weakest skills, and the questions most students missed — openable straight
+   into a real attempt), **assignments** ("20 Inference questions by Friday")
+   that appear on each student's dashboard with a live progress bar and a
+   who's-done-it roster on the teacher side, **announcements**, a
+   **class leaderboard** (questions this week / accuracy / streak / 2048
+   score), sortable rosters with inactivity flags and trend arrows, a
+   **Copy invite** button, and a one-click **.xlsx class export** (roster +
+   every mistake with each student's own reflection).
 
 Privacy is enforced by row-level security: joining happens through a
 server-side `join_class` function, students can never read the class list,

@@ -178,6 +178,60 @@ $$;
 revoke all on function public.join_class(text, text) from public;
 grant execute on function public.join_class(text, text) to authenticated;
 
+-- Assignments & announcements a teacher posts to a class. Students read the
+-- posts for classes they're members of; assignment completion is computed
+-- client-side from each student's synced attempts (no write-back needed).
+create table if not exists public.class_posts (
+  id         uuid primary key default gen_random_uuid(),
+  class_id   uuid not null references public.classes (id) on delete cascade,
+  teacher_id uuid not null references auth.users (id) on delete cascade,
+  kind       text not null check (kind in ('assignment', 'announcement')),
+  title      text not null check (char_length(title) between 1 and 200),
+  body       text check (char_length(body) <= 2000),
+  skills     jsonb,        -- assignment: array of skill names; null/[] = any skill
+  target     int check (target is null or target between 1 and 500),
+  due_at     timestamptz,  -- assignment: optional due date
+  created_at timestamptz not null default now()
+);
+
+create index if not exists class_posts_class_idx on public.class_posts (class_id);
+
+alter table public.class_posts enable row level security;
+
+drop policy if exists "Teacher or class members can read posts" on public.class_posts;
+create policy "Teacher or class members can read posts"
+  on public.class_posts for select
+  using (
+    auth.uid() = teacher_id
+    or exists (
+      select 1 from public.class_members m
+      where m.class_id = class_posts.class_id
+        and m.student_id = auth.uid()
+    )
+  );
+
+drop policy if exists "Teachers post to own classes" on public.class_posts;
+create policy "Teachers post to own classes"
+  on public.class_posts for insert
+  with check (
+    auth.uid() = teacher_id
+    and exists (
+      select 1 from public.classes c
+      where c.id = class_posts.class_id and c.teacher_id = auth.uid()
+    )
+  );
+
+drop policy if exists "Teachers edit own posts" on public.class_posts;
+create policy "Teachers edit own posts"
+  on public.class_posts for update
+  using (auth.uid() = teacher_id)
+  with check (auth.uid() = teacher_id);
+
+drop policy if exists "Teachers delete own posts" on public.class_posts;
+create policy "Teachers delete own posts"
+  on public.class_posts for delete
+  using (auth.uid() = teacher_id);
+
 -- Teachers may READ (never write) the progress of students in their classes.
 drop policy if exists "Teachers can read linked students' progress" on public.progress;
 drop policy if exists "Teachers can read class students' progress" on public.progress;
