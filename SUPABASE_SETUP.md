@@ -84,16 +84,24 @@ A teacher can watch students' progress and comment on their mistakes:
    reflection — and a comment box. Comments appear on the student's side
    wherever they review that question (question bank, statistics → recent
    attempts), marked 💬.
-4. **Teacher tools per class:** summary chips (class accuracy, attempts this
-   week, who practiced), a *Class insights* panel (14-day activity chart,
-   weakest skills, and the questions most students missed — openable straight
-   into a real attempt), **assignments** ("20 Inference questions by Friday")
-   that appear on each student's dashboard with a live progress bar and a
-   who's-done-it roster on the teacher side, **announcements**, a
-   **class leaderboard** (questions this week / accuracy / streak / 2048
-   score), sortable rosters with inactivity flags and trend arrows, a
-   **Copy invite** button, and a one-click **.xlsx class export** (roster +
-   every mistake with each student's own reflection).
+4. **Teacher tools**, each its own page in the dashboard sidebar:
+   - **Students** — rosters per class with sort, inactivity flags, trend
+     arrows, summary chips, a ⚠ *Needs your attention* strip (quiet 7+ days,
+     accuracy dropping, overdue assignments), Copy code / Copy invite, and a
+     one-click **.xlsx class export** (roster + every mistake + SAT scores).
+   - **Assignments** — post "20 Inference questions by Friday" (skill, target,
+     due date); it appears on each student's dashboard with a live progress
+     bar, and the teacher sees a who's-done-it roster. Announcements post to
+     the same student card.
+   - **Insights** — 14-day activity chart, weakest skills, and the questions
+     most students missed, openable straight into a real attempt to comment.
+   - **Leaderboard** — questions this week / accuracy / streak / 2048 score.
+   - **SAT Scores** — who's taken the real SAT and when, latest & best real
+     scores with section breakdowns, latest practice score, each student's
+     goal (hit ✓ or gap), and full test-by-test history on the student's
+     profile. Students self-report under **My SAT scores** in their game
+     sidebar; scores sync inside their normal progress data, so this needs
+     no extra tables.
 
 Privacy is enforced by row-level security: joining happens through a
 server-side `join_class` function, students can never read the class list,
